@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>شهادات مجُودة — شهادات شكر لأسماء متعددة دفعة واحدة</title>
+  <meta name="description" content="أنشئ شهادات الشكر والتقدير والحضور لكل الأسماء دفعة واحدة: الصق القائمة، اختر التصميم، وحمّل الكل PDF أو صوراً — من متجر مجودة.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=El+Messiri:wght@400;600;700&family=Reem+Kufi:wght@400;600;700&family=Markazi+Text:wght@400;600;700&family=Changa:wght@400;600;700&family=Scheherazade+New:wght@400;700&family=Lateef:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Marcellus&family=Montserrat:wght@300;400;600;700;800&family=Poppins:wght@400;600;700&family=Raleway:wght@400;600;700&family=Oswald:wght@400;600;700&family=Lato:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Pinyon+Script&family=Dancing+Script:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── Navbar (clean: brand + language only) ────────────────── -->
+  <nav class="navbar">
+    <button class="nav-brand" data-acc="templates" aria-label="الرئيسية">
+      <i class="fas fa-award"></i>
+      <span data-i18n="brand">شهادات مجُودة</span>
+    </button>
+    <div class="nav-right">
+      <a class="mj-store" href="https://majoodah.com" target="_blank" rel="noopener">متجر مجُودة</a>
+      <button class="mj-act-btn" id="mjActBtn" type="button">تفعيل التحميل</button>
+      <div class="lang-toggle">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn active" data-lang="ar">ع</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="mj-act" id="mjAct" hidden>
+    <div class="mj-act-box">
+      <b>تفعيل التحميل بلا علامة</b>
+      <p>التصميم وإضافة الأسماء والمعاينة مجانية. بعد الشراء يصلك كود يبدأ بـ CRT — الصقه هنا لتحميل كل الشهادات نظيفة، بلا حدّ لعدد الأسماء.</p>
+      <form id="mjForm"><input id="mjCode" placeholder="CRT-XXXX-XXXX" autocomplete="off" dir="ltr"><button class="btn btn-primary btn-sm">تفعيل</button><button type="button" class="btn btn-ghost btn-sm" id="mjClose">إغلاق</button></form>
+      <div class="mj-msg" id="mjMsg"></div>
+    </div>
+  </div>
+
+  <!-- ── Single-Screen Workspace ──────────────────────────────── -->
+  <main class="main">
+    <div class="workspace">
+
+      <!-- ════ Live Preview Pane (persistent) ════ -->
+      <aside class="ws-preview">
+        <div class="ws-preview-head">
+          <div class="ws-tools">
+            <button class="tool-btn" id="btnUndo" title="" data-i18n-title="undo" disabled><i class="fas fa-rotate-left"></i></button>
+            <button class="tool-btn" id="btnRedo" title="" data-i18n-title="redo" disabled><i class="fas fa-rotate-right"></i></button>
+          </div>
+          <div class="ws-tools">
+            <div class="export-wrap" id="exportWrap">
+              <button class="export-btn" id="btnExport">
+                <i class="fas fa-file-export"></i> <span data-i18n="export">Export</span>
+                <i class="fas fa-chevron-down export-caret"></i>
+              </button>
+              <div class="export-menu" id="exportMenu">
+                <button class="export-opt" id="btnDownloadImages"><i class="fas fa-images"></i> <span data-i18n="export_images">Images (ZIP)</span></button>
+                <button class="export-opt" id="btnDownloadPDF"><i class="fas fa-file-pdf"></i> <span data-i18n="export_pdf">PDF</span></button>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" id="saveTemplateTop"><i class="fas fa-save"></i> <span data-i18n="save_template">Save Template</span></button>
+          </div>
+        </div>
+        <div class="canvas-scaler" id="canvasScaler">
+          <button class="zoom-fab" id="btnZoomPreview" title="" data-i18n-title="zoom_preview"><i class="fas fa-expand"></i></button>
+          <div id="certPreviewWrapper"><div id="certPreview" class="cert-el"></div></div>
+        </div>
+        <div class="progress-wrap" id="progressWrap" style="display:none">
+          <div class="prog-bar"><div class="prog-fill" id="progressFill"></div></div>
+          <p class="prog-text" id="progressText">Processing…</p>
+        </div>
+      </aside>
+
+      <!-- ════ Side Accordion ════ -->
+      <section class="ws-accordion" id="wsAccordion">
+
+        <!-- ── Accordion: Templates ── -->
+        <div class="acc-item open" data-acc="templates">
+          <button class="acc-head">
+            <i class="fas fa-th-large acc-icon"></i>
+            <span class="acc-title" data-i18n="step_templates">Templates</span>
+            <i class="fas fa-chevron-down acc-arrow"></i>
+          </button>
+          <div class="acc-body">
+            <div class="acc-actions">
+              <p data-i18n="templates_desc">Select a design or start from a blank canvas</p>
+              <button class="btn btn-outline btn-sm" data-acc="designer"><i class="fas fa-plus"></i> <span data-i18n="create_custom">Create Custom</span></button>
+            </div>
+            <div class="templates-grid" id="templatesGrid"></div>
+          </div>
+        </div>
+
+        <!-- ── Accordion: Designer ── -->
+        <div class="acc-item" data-acc="designer">
+          <button class="acc-head">
+            <i class="fas fa-paint-brush acc-icon"></i>
+            <span class="acc-title" data-i18n="step_designer">Designer</span>
+            <i class="fas fa-chevron-down acc-arrow"></i>
+          </button>
+          <div class="acc-body">
+            <!-- Save toolbar -->
+            <div class="designer-toolbar">
+              <div class="dt-name">
+                <label for="templateName" data-i18n="ctrl_template_name">Template Name</label>
+                <input type="text" id="templateName" data-i18n-placeholder="ctrl_template_name" placeholder="My Custom Template" value="My Custom Template">
+              </div>
+              <div class="dt-actions">
+                <button class="btn btn-ghost btn-sm" id="resetDesigner"><i class="fas fa-undo"></i> <span data-i18n="reset">Reset</span></button>
+              </div>
+            </div>
+
+            <!-- Sub-tabs -->
+            <div class="ctrl-tabs" id="ctrlTabs">
+              <button class="ctrl-tab active" data-panel="media"><i class="fas fa-image"></i><span data-i18n="tab_bg_logo">Background &amp; Logo</span></button>
+              <button class="ctrl-tab" data-panel="style"><i class="fas fa-font"></i><span data-i18n="tab_style">Style</span></button>
+              <button class="ctrl-tab" data-panel="text"><i class="fas fa-align-center"></i><span data-i18n="tab_text">Text</span></button>
+              <button class="ctrl-tab" data-panel="decor"><i class="fas fa-star"></i><span data-i18n="tab_decor">Decor</span></button>
+            </div>
+
+            <!-- Sub-panel: Style (fonts & colors) -->
+            <div class="ctrl-panel" id="panel-style">
+              <div class="ctrl-group">
+                <div class="ctrl-title"><i class="fas fa-font"></i> <span data-i18n="ctrl_typography">Typography</span></div>
+                <div class="ctrl-row">
+                  <label data-i18n="ctrl_font">Font</label>
+                  <select id="primaryFont">
+                    <optgroup label="عربي · Arabic">
+                      <option value="Cairo">Cairo · القاهرة</option>
+                      <option value="Tajawal">Tajawal · تجوال</option>
+                      <option value="Almarai">Almarai · المراعي</option>
+                      <option value="Amiri">Amiri · أميري</option>
+                      <option value="Aref Ruqaa">Aref Ruqaa · رقعة</option>
+                      <option value="El Messiri">El Messiri · المسيري</option>
+                      <option value="Reem Kufi">Reem Kufi · ريم كوفي</option>
+                      <option value="Markazi Text">Markazi · مركزي</option>
+                      <option value="Changa">Changa · شنقة</option>
+                      <option value="Scheherazade New">Scheherazade · شهرزاد</option>
+                      <option value="Lateef">Lateef · لطيف</option>
+                    </optgroup>
+                    <optgroup label="English">
+                      <option value="Playfair Display">Playfair Display</option>
+                      <option value="Cormorant Garamond">Cormorant Garamond</option>
+                      <option value="Cinzel">Cinzel</option>
+                      <option value="EB Garamond">EB Garamond</option>
+                      <option value="Libre Baskerville">Libre Baskerville</option>
+                      <option value="Merriweather">Merriweather</option>
+                      <option value="Marcellus">Marcellus</option>
+                      <option value="Montserrat">Montserrat</option>
+                      <option value="Poppins">Poppins</option>
+                      <option value="Raleway">Raleway</option>
+                      <option value="Oswald">Oswald</option>
+                      <option value="Lato">Lato</option>
+                      <option value="Inter">Inter</option>
+                      <option value="Great Vibes">Great Vibes (script)</option>
+                      <option value="Pinyon Script">Pinyon Script (script)</option>
+                      <option value="Dancing Script">Dancing Script (script)</option>
+                      <option value="Pacifico">Pacifico</option>
+                      <option value="Georgia, serif">Georgia</option>
+                    </optgroup>
+                  </select>
+                </div>
+                <div class="ctrl-row"><label data-i18n="ctrl_heading_color">Heading Color</label><input type="color" id="accentColor" value="#8b6914"></div>
+                <div class="ctrl-row"><label data-i18n="ctrl_body_color">Body Color</label><input type="color" id="textColor" value="#3d2b1f"></div>
+                <div class="ctrl-row"><label data-i18n="ctrl_divider_color">Divider Color</label><input type="color" id="dividerColor" value="#c9a84c"></div>
+              </div>
+            </div>
+
+            <!-- Sub-panel: Text -->
+            <div class="ctrl-panel" id="panel-text">
+              <div class="editor-hint"><i class="fas fa-hand-pointer"></i> <span data-i18n="editor_hint">Tip: click any text on the certificate to edit, drag to move, or resize &amp; recolor it.</span></div>
+              <button class="btn btn-primary full" id="btnAddText" style="margin-bottom:14px;"><i class="fas fa-plus"></i> <span data-i18n="add_text">Add Text</span></button>
+              <div class="ctrl-group">
+                <div class="ctrl-title"><i class="fas fa-align-center"></i> <span data-i18n="ctrl_text_content">Text Content</span></div>
+                <div class="ctrl-row vertical"><label data-i18n="ctrl_cert_title">Certificate Title</label><input type="text" id="certTitle" value="Certificate of Achievement"></div>
+                <div class="ctrl-row vertical"><label data-i18n="ctrl_subtitle">Subtitle</label><input type="text" id="certSubtitle" value="This is to certify that"></div>
+                <div class="ctrl-row vertical"><label data-i18n="ctrl_after_name">After Name</label><input type="text" id="certBody" value="has successfully completed"></div>
+                <div class="ctrl-row vertical"><label data-i18n="ctrl_footer_note">Footer Note</label><input type="text" id="certFooter" value="In recognition of outstanding dedication and achievement"></div>
+              </div>
+            </div>
+
+            <!-- Sub-panel: Decor -->
+            <div class="ctrl-panel" id="panel-decor">
+              <div class="ctrl-group">
+                <div class="ctrl-title"><i class="fas fa-star"></i> <span data-i18n="ctrl_seal">Seal &amp; Decoration</span></div>
+                <div class="ctrl-row"><label data-i18n="ctrl_show_seal">Show Seal</label><label class="toggle"><input type="checkbox" id="showSeal"><span class="tog-track"></span></label></div>
+                <div id="sealOpts" style="display:none">
+                  <div class="ctrl-row"><label data-i18n="ctrl_seal_color">Seal Color</label><input type="color" id="sealColor" value="#c9a84c"></div>
+                  <div class="ctrl-row">
+                    <label data-i18n="ctrl_symbol">Symbol</label>
+                    <select id="sealSymbol"><option value="★">★ Star</option><option value="✦">✦ Diamond</option><option value="✓">✓ Check</option><option value="❋">❋ Flower</option><option value="◆">◆ Rhombus</option><option value="⚜">⚜ Fleur</option></select>
+                  </div>
+                </div>
+                <div class="ctrl-row">
+                  <label data-i18n="ctrl_corners">Corners</label>
+                  <select id="cornerStyle"><option value="none" data-i18n-opt="corner_none">None</option><option value="brackets" data-i18n-opt="corner_brackets">L-Brackets</option><option value="stars" data-i18n-opt="corner_stars">Stars ✦</option><option value="flourishes" data-i18n-opt="corner_flourishes">Flourishes ❧</option></select>
+                </div>
+                <div class="ctrl-row"><label data-i18n="ctrl_accent_lines">Accent Lines</label><label class="toggle"><input type="checkbox" id="showTopLine" checked><span class="tog-track"></span></label></div>
+              </div>
+              <div class="ctrl-group">
+                <div class="ctrl-title"><i class="fas fa-eye"></i> <span data-i18n="ctrl_visible_fields">Visible Fields</span></div>
+                <div class="ctrl-row"><label data-i18n="ctrl_school">School Name</label><label class="toggle"><input type="checkbox" id="showSchool" checked><span class="tog-track"></span></label></div>
+                <div class="ctrl-row"><label data-i18n="ctrl_subject">Subject</label><label class="toggle"><input type="checkbox" id="showSubject" checked><span class="tog-track"></span></label></div>
+                <div class="ctrl-row"><label data-i18n="ctrl_grade">Grade / Score</label><label class="toggle"><input type="checkbox" id="showGrade" checked><span class="tog-track"></span></label></div>
+                <div class="ctrl-row"><label data-i18n="ctrl_instructor">Instructor</label><label class="toggle"><input type="checkbox" id="showInstructor" checked><span class="tog-track"></span></label></div>
+                <div class="ctrl-row"><label data-i18n="ctrl_date">Date</label><label class="toggle"><input type="checkbox" id="showDate" checked><span class="tog-track"></span></label></div>
+              </div>
+            </div>
+
+            <!-- Sub-panel: Background & Logo (first) -->
+            <div class="ctrl-panel active" id="panel-media">
+              <div class="ctrl-group">
+                <div class="ctrl-title"><i class="fas fa-fill-drip"></i> <span data-i18n="ctrl_background">Background</span></div>
+                <div class="ctrl-row">
+                  <label data-i18n="ctrl_preset">Preset</label>
+                  <select id="bgPreset">
+                    <option value="custom" data-i18n-opt="preset_custom">Custom</option>
+                    <option value="cream" data-i18n-opt="preset_cream">Warm Cream</option>
+                    <option value="blue" data-i18n-opt="preset_blue">Sky Blue</option>
+                    <option value="green" data-i18n-opt="preset_green">Mint Green</option>
+                    <option value="purple" data-i18n-opt="preset_purple">Soft Lavender</option>
+                    <option value="dark" data-i18n-opt="preset_dark">Dark Navy</option>
+                  </select>
+                </div>
+                <div class="ctrl-row"><label data-i18n="ctrl_color">Color</label><input type="color" id="bgColor" value="#fef9ec"></div>
+                <div class="ctrl-row"><label data-i18n="ctrl_gradient">Gradient</label><label class="toggle"><input type="checkbox" id="bgGradient"><span class="tog-track"></span></label></div>
+                <div class="ctrl-row" id="gradRow"><label data-i18n="ctrl_gradient_end">Gradient End</label><input type="color" id="bgColor2" value="#fffbe6"></div>
+              </div>
+              <div class="ctrl-group">
+                <div class="ctrl-title"><i class="fas fa-border-all"></i> <span data-i18n="ctrl_border">Border</span></div>
+                <div class="ctrl-row"><label data-i18n="ctrl_show_border">Show Border</label><label class="toggle"><input type="checkbox" id="showBorder" checked><span class="tog-track"></span></label></div>
+                <div id="borderOpts">
+                  <div class="ctrl-row"><label data-i18n="ctrl_style">Style</label><select id="borderStyle"><option value="double">Double</option><option value="single">Single</option><option value="thick">Thick</option><option value="dashed">Dashed</option></select></div>
+                  <div class="ctrl-row"><label data-i18n="ctrl_color">Color</label><input type="color" id="borderColor" value="#c9a84c"></div>
+                </div>
+              </div>
+              <div class="ctrl-group">
+                <div class="ctrl-title"><i class="fas fa-image"></i> <span data-i18n="ctrl_logo">Logo / Image</span></div>
+                <div class="logo-drop-zone" id="logoDropZone">
+                  <div class="logo-ph" id="logoPh"><i class="fas fa-cloud-upload-alt"></i><span data-i18n="logo_upload">Click or drag to upload</span><small>PNG · JPG · SVG</small></div>
+                  <img id="logoPreviewImg" class="logo-preview-img" style="display:none" alt="Logo">
+                  <input type="file" id="logoInput" accept="image/*" style="display:none">
+                </div>
+                <div id="logoControls" style="display:none">
+                  <div class="ctrl-row" style="margin-top:10px;">
+                    <label data-i18n="ctrl_position">Position</label>
+                    <select id="logoPosition"><option value="top-center" data-i18n-opt="pos_top_center">Top Center</option><option value="top-left" data-i18n-opt="pos_top_left">Top Left</option><option value="top-right" data-i18n-opt="pos_top_right">Top Right</option><option value="bottom-center" data-i18n-opt="pos_bottom">Bottom Center</option></select>
+                  </div>
+                  <div class="ctrl-row">
+                    <label data-i18n="ctrl_size">Size</label>
+                    <select id="logoSize"><option value="55" data-i18n-opt="size_small">Small</option><option value="85" selected data-i18n-opt="size_medium">Medium</option><option value="120" data-i18n-opt="size_large">Large</option></select>
+                  </div>
+                  <div class="logo-action-btns">
+                    <button class="btn btn-ghost btn-sm" id="btnChangeLogo"><i class="fas fa-sync-alt"></i> <span data-i18n="ctrl_change">Change</span></button>
+                    <button class="btn btn-ghost btn-sm" id="btnRemoveLogo"><i class="fas fa-trash"></i> <span data-i18n="ctrl_remove">Remove</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="ctrl-group">
+                <div class="ctrl-title"><i class="fas fa-panorama"></i> <span data-i18n="ctrl_bg_image">Background Image</span></div>
+                <div class="logo-drop-zone" id="bgImgDropZone">
+                  <div class="logo-ph" id="bgImgPh"><i class="fas fa-cloud-upload-alt"></i><span data-i18n="bgimg_upload">Click or drag a background</span><small>PNG · JPG</small></div>
+                  <img id="bgImgPreview" class="logo-preview-img" style="display:none" alt="Background">
+                  <input type="file" id="bgImgInput" accept="image/*" style="display:none">
+                </div>
+                <div id="bgImgControls" style="display:none">
+                  <div class="ctrl-row" style="margin-top:10px;">
+                    <label data-i18n="ctrl_bg_fit">Fit</label>
+                    <select id="bgImgFit"><option value="cover" data-i18n-opt="fit_cover">Cover</option><option value="contain" data-i18n-opt="fit_contain">Contain</option><option value="stretch" data-i18n-opt="fit_stretch">Stretch</option></select>
+                  </div>
+                  <div class="ctrl-row"><label data-i18n="ctrl_bg_opacity">Opacity</label><div class="range-wrap"><input type="range" id="bgImgOpacity" min="10" max="100" value="100"><span class="range-val" id="bgImgOpacityVal">100</span></div></div>
+                  <div class="logo-action-btns">
+                    <button class="btn btn-ghost btn-sm" id="btnChangeBgImg"><i class="fas fa-sync-alt"></i> <span data-i18n="ctrl_change">Change</span></button>
+                    <button class="btn btn-ghost btn-sm" id="btnRemoveBgImg"><i class="fas fa-trash"></i> <span data-i18n="ctrl_remove">Remove</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /acc designer -->
+
+        <!-- ── Accordion: Names (last) ── -->
+        <div class="acc-item" data-acc="names">
+          <button class="acc-head">
+            <i class="fas fa-users acc-icon"></i>
+            <span class="acc-title" data-i18n="step_names">Names</span>
+            <span class="acc-badge" id="accNamesBadge">0</span>
+            <i class="fas fa-chevron-down acc-arrow"></i>
+          </button>
+          <div class="acc-body">
+            <div class="acc-actions">
+              <p data-i18n="names_desc">Each entry generates one certificate</p>
+              <div class="header-actions">
+                <button class="btn btn-outline btn-sm" id="btnImportCSV"><i class="fas fa-file-csv"></i> <span data-i18n="import_csv">Import CSV</span></button>
+                <input type="file" id="csvInput" accept=".csv" style="display:none">
+                <button class="btn btn-ghost btn-sm" id="btnClearAll"><i class="fas fa-trash-alt"></i> <span data-i18n="clear_all">Clear All</span></button>
+              </div>
+            </div>
+
+            <div class="card mj-paste-card">
+                <div class="card-title"><span><i class="fas fa-paste"></i> لصق قائمة أسماء</span></div>
+                <p class="mj-hint">انسخ عمود الأسماء من Excel أو الواتساب والصقه هنا — كل سطر شهادة. بقية الحقول (المدرسة، المادة، التاريخ…) تُؤخذ من النموذج أدناه.</p>
+                <textarea id="mjPaste" rows="5" placeholder="محمد عبدالله&#10;نورة سعد&#10;عبدالرحمن خالد"></textarea>
+                <div class="form-actions"><button class="btn btn-primary" id="mjPasteAdd" type="button"><i class="fas fa-users"></i> إضافة كل الأسماء</button></div>
+              </div>
+
+              <div class="card add-form">
+              <div class="card-title"><span><i class="fas fa-user-plus"></i> <span id="formTitle" data-i18n="add_entry">Add Entry</span></span></div>
+              <div class="form-grid">
+                <div class="form-group span2"><label><span data-i18n="full_name">Full Name</span> <span class="req">*</span></label><input type="text" id="fName" placeholder="مثال: محمد عبدالله" autocomplete="off"></div>
+                <div class="form-group"><label data-i18n="f_school">School / Institution</label><input type="text" id="fSchool" placeholder="مثال: مدرسة النور"></div>
+                <div class="form-group"><label data-i18n="f_subject">Subject / Course</label><input type="text" id="fSubject" placeholder="مثال: الرياضيات"></div>
+                <div class="form-group"><label data-i18n="f_grade">Grade / Score</label><input type="text" id="fGrade" placeholder="مثال: ممتاز أو 95%"></div>
+                <div class="form-group"><label data-i18n="f_instructor">Instructor</label><input type="text" id="fInstructor" placeholder="مثال: أ. سارة حسن"></div>
+                <div class="form-group span2"><label data-i18n="f_date">Date</label><input type="date" id="fDate"></div>
+              </div>
+              <div class="form-actions">
+                <button class="btn btn-ghost btn-sm" id="btnCancelEdit" style="display:none"><i class="fas fa-times"></i> <span data-i18n="cancel">Cancel</span></button>
+                <button class="btn btn-outline btn-sm" id="btnClearForm"><i class="fas fa-eraser"></i> <span data-i18n="clear">Clear</span></button>
+                <button class="btn btn-primary" id="btnAddStudent"><i class="fas fa-plus"></i> <span data-i18n="add_entry">Add Entry</span></button>
+              </div>
+              <div class="csv-hint"><i class="fas fa-info-circle"></i> CSV: <code>Name, School, Subject, Grade, Instructor, Date</code></div>
+            </div>
+
+            <div class="card table-card">
+              <div class="table-header-row">
+                <span class="card-title-text"><i class="fas fa-list"></i> <span data-i18n="entries_label">Entries</span> (<span id="studentCount">0</span>)</span>
+                <input type="text" id="searchStudents" class="search-input" data-i18n-placeholder="search_placeholder" placeholder="Search…">
+              </div>
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead><tr><th class="col-num">#</th><th data-i18n="col_name">Name</th><th class="col-hide-sm" data-i18n="col_school">School</th><th class="col-hide-sm" data-i18n="col_subject">Subject</th><th class="col-hide-md" data-i18n="col_grade">Grade</th><th class="col-hide-md" data-i18n="col_date">Date</th><th class="col-act" data-i18n="col_actions">Actions</th></tr></thead>
+                  <tbody id="studentsBody"><tr><td colspan="7"><div class="empty-state"><i class="fas fa-user-graduate"></i><p data-i18n="no_entries">No entries yet — add one above</p></div></td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div><!-- /acc names -->
+
+      </section>
+    </div>
+  </main>
+
+  <!-- ── Modal ─────────────────────────────────────────────────── -->
+  <div class="modal" id="certModal">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+      <div class="modal-scaler" id="modalScaler"><div id="modalCertHolder"></div></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="modalDlImg"><i class="fas fa-image"></i> <span data-i18n="dl_image">Download Image</span></button>
+        <button class="btn btn-success" id="modalDlPDF"><i class="fas fa-file-pdf"></i> <span data-i18n="dl_pdf">Download PDF</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="alert"></div>
+  <div id="renderArea" style="position:fixed;left:-9999px;top:0;width:1056px;height:816px;overflow:hidden;pointer-events:none;z-index:-1;"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
