@@ -495,3 +495,11 @@ input[type="range"]::-moz-range-thumb { width:16px;height:16px;border:none;borde
 .mj-msg{font-size:13.5px;margin-top:8px}.mj-msg.ok{color:#1f7a43}.mj-msg.err{color:#b4413a}
 .mj-paste-card textarea{width:100%;border:1px solid #d9e6e6;border-radius:10px;padding:10px;font:inherit;resize:vertical;box-sizing:border-box}
 .mj-hint{font-size:13px;color:#5b7476;margin:4px 0 8px}
+
+/* عناوين الواجهة بخط مجودة */
+h1,h2,h3{font-family:"Baloo Bhaijaan 2","Cairo",sans-serif}
+
+/* سهم القوائم المنسدلة — موحّد في منتجات مجودة */
+select{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%236b8486' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-size:11px 8px!important;padding-inline-end:30px!important;text-overflow:ellipsis;cursor:pointer}
+select:dir(rtl){background-position:left 11px center!important}select:dir(ltr){background-position:right 11px center!important}
+select::-ms-expand{display:none}
