@@ -53,8 +53,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 .slot{display:flex;gap:8px;align-items:center;border:1px dashed var(--line);border-radius:10px;padding:6px 8px;margin-bottom:6px}
 .slot img{height:34px;max-width:70px;object-fit:contain;background:#fff;border-radius:6px}
 .names{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px}
-.names button{display:flex;gap:8px;width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;padding:6px 10px;text-align:start;cursor:pointer;font-size:13.5px}
+.names .nr{display:flex;align-items:stretch;border-bottom:1px solid var(--line)}
+.names button{display:flex;gap:8px;flex:1;min-width:0;border:0;background:transparent;padding:6px 10px;text-align:start;cursor:pointer;font-size:13.5px}
 .names button[aria-current=true]{background:var(--teal-soft);color:var(--teal);font-weight:600}
+.names button.gb{flex:none;font-size:12px;color:var(--muted);padding:4px 10px;border-inline-start:1px solid var(--line)}.names button.gb:hover{color:var(--teal)}
 .names .i{color:var(--muted);min-width:22px}
 .pv{position:sticky;top:120px}
 .pvbar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -66,6 +68,9 @@ button,input,select,textarea{font:inherit;color:inherit}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:9px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60}.toast.show{opacity:1}
 .busy{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;z-index:70}.busy div{background:var(--card);border-radius:16px;padding:22px 30px;text-align:center;min-width:260px}
 .busy progress{width:100%;margin-top:10px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:grid;place-items:center;z-index:65;padding:16px}
+.modal .card{max-width:680px;width:100%;display:flex;flex-direction:column;gap:12px;direction:rtl}
+.modal canvas{width:100%;aspect-ratio:5/2;background:#fff;border:1px solid var(--line);border-radius:10px;touch-action:none;cursor:crosshair}
 /* ===== الشهادة A4 أفقي ===== */
 .cert{--c:#0a6d73;--g:#b8893a;--soft:#e3f1f0;width:297mm;height:210mm;position:relative;overflow:hidden;background:#fff;color:#1f2a2b;direction:rtl;font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif}
 .cert .in{position:absolute;inset:14mm 16mm;display:flex;flex-direction:column;align-items:center;text-align:center}
@@ -80,16 +85,16 @@ button,input,select,textarea{font:inherit;color:inherit}
 .cert .mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;padding-bottom:4mm}
 .cert .ft{width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:6mm}
 .cert .dt{font-size:11pt;color:#3a4a4b;text-align:right;line-height:1.6;min-width:46mm}
-.cert .sigs{display:flex;gap:12mm;justify-content:center;flex:1}
-.cert .sig{text-align:center;font-size:11pt;line-height:1.5;min-width:46mm;position:relative}
+.cert .sigs{display:flex;gap:8mm;justify-content:center;flex:1;min-width:0}
+.cert .sig{text-align:center;font-size:11pt;line-height:1.5;min-width:40mm;position:relative}
 .cert .sig b{display:block;color:var(--c);font-size:11pt}
-.cert .sig img.s{height:15mm;display:block;margin:0 auto -2mm;max-width:46mm;object-fit:contain}
+.cert .sig img.s{height:15mm;display:block;margin:0 auto -2mm;max-width:44mm;object-fit:contain}
 .cert .sig .blank{height:13mm}
 .cert .seal{position:absolute;height:26mm;opacity:.85;left:50%;transform:translateX(-50%) rotate(-8deg);bottom:2mm}
-.cert .qr{min-width:46mm;display:flex;justify-content:flex-end}.cert .qr svg{width:20mm;height:20mm}
+.cert .qr{min-width:20mm;display:flex;justify-content:flex-end}.cert .qr svg{width:20mm;height:20mm}
 .cert .wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Baloo Bhaijaan 2";font-weight:800;font-size:80pt;color:rgba(10,109,115,.13);transform:rotate(-22deg);pointer-events:none;z-index:5}
 .cert .brandln{position:absolute;bottom:3.5mm;left:0;right:0;text-align:center;font-size:6.5pt;color:#9bb}
-.cert svg.deco{position:absolute;pointer-events:none}
+.cert .deco{position:absolute;pointer-events:none}
 /* 1 رسمي */
 .t-rasmi .in,.t-dhahabi .in{inset:17mm 30mm 15mm}
 .t-rasmi .fr1{position:absolute;inset:6mm;border:1.6mm solid var(--c)}.t-rasmi .fr2{position:absolute;inset:9mm;border:.35mm solid var(--g)}
@@ -152,16 +157,16 @@ select::-ms-expand{display:none}
   <div class="card"><h2><span class="n">٢</span>نص الشهادة</h2>
    <div class="f"><label for="t_title">العنوان</label><input id="t_title" data-s="title"></div>
    <div class="f"><label for="t_pre">قبل الاسم</label><input id="t_pre" data-s="pre"></div>
-   <div class="f"><label for="t_body">بعد الاسم <span class="note">— {السبب} و{الصف} تُستبدل من قائمة الأسماء</span></label><textarea id="t_body" data-s="body"></textarea></div>
-   <div class="two"><div class="f"><label for="t_reason">السبب الافتراضي</label><input id="t_reason" data-s="reason"></div>
-   <div class="f"><label for="t_gender">الصيغة</label><select id="t_gender" data-s="gender"><option value="m">مذكر (الطالب، له)</option><option value="f">مؤنث (الطالبة، لها)</option></select></div></div>
+   <div class="f"><label for="t_body">بعد الاسم <span class="note">— {السبب} و{الصف} تُستبدل من قائمة الأسماء، و«الطالب/ـة» تُصاغ بحسب جنس كل اسم</span></label><textarea id="t_body" data-s="body"></textarea></div>
+   <div class="two"><div class="f"><label for="t_reason">السبب الافتراضي <span class="note">(اتركه فارغاً لإخفائه)</span></label><input id="t_reason" data-s="reason"></div>
+   <div class="f"><label for="t_gender">الصيغة الافتراضية</label><select id="t_gender" data-s="gender"><option value="m">مذكر (الطالب، له)</option><option value="f">مؤنث (الطالبة، لها)</option></select></div></div>
    <div class="two"><div class="f"><label for="t_font">خط الاسم</label><select id="t_font" data-s="nameFont"><option value="IBM Plex Sans Arabic">بلكس — رسمي</option><option value="Amiri">أميري — كلاسيكي</option><option value="Aref Ruqaa">رقعة — خط يدوي</option><option value="Baloo Bhaijaan 2">بالو — مدوّر</option><option value="El Messiri">المسيري — أنيق</option><option value="Reem Kufi">ريم كوفي — كوفي</option></select></div>
    <div class="f"><label for="t_date">التاريخ</label><input id="t_date" type="date" data-s="date"></div></div>
    <div class="f"><label for="t_dmode">صيغة التاريخ</label><select id="t_dmode" data-s="dmode"><option value="h">هجري</option><option value="hg">هجري وميلادي</option><option value="none">بدون تاريخ</option></select></div>
   </div>
   <div class="card"><h2><span class="n">٣</span>الأسماء</h2>
-   <p class="note" style="margin:0 0 6px">الصق عمود الأسماء من Excel أو نور (اسم في كل سطر). لعمود ثانٍ للسبب وثالث للصف: انسخ الأعمدة معاً أو افصل بـ | .</p>
-   <div class="f"><textarea id="namesRaw" rows="6" placeholder="محمد عبدالله العتيبي&#10;سارة خالد الشهري | لتميزها في مسابقة القراءة | الخامس أ"></textarea></div>
+   <p class="note" style="margin:0 0 6px">الصق عمود الأسماء من Excel أو نور (اسم في كل سطر). لعمود ثانٍ للسبب وثالث للصف: انسخ الأعمدة معاً أو افصل بـ | . ولكل اسم جنسه: أضف عموداً فيه «ذكر» أو «أنثى»، أو اضغط زر الجنس بجوار الاسم. و«-» مكان السبب تخفيه لذلك الاسم.</p>
+   <div class="f"><textarea id="namesRaw" rows="6" placeholder="محمد عبدالله العتيبي&#10;سارة خالد الشهري | لتميزها في مسابقة القراءة | الخامس أ | أنثى"></textarea></div>
    <div class="row"><label class="btn small" style="cursor:pointer">استيراد Excel / CSV<input type="file" id="xls" accept=".xlsx,.xls,.csv" hidden></label><span class="note" id="nCount"></span><div class="spacer"></div><button class="btn small" id="sortN">ترتيب أبجدي</button></div>
    <div class="names" id="names"></div>
   </div>
@@ -178,7 +183,7 @@ select::-ms-expand{display:none}
  <section class="pv">
   <div class="pvbar"><button class="btn small" id="prevN">→</button><b id="pvName" style="font-family:var(--f-d)">—</b><button class="btn small" id="nextN">←</button><div class="spacer"></div><span class="note" id="pvNote"></span></div>
   <div class="pvbox" id="pvbox"><div class="pvscale" id="pvscale"></div></div>
-  <p class="note" style="margin-top:8px">A4 أفقي — جاهزة للطباعة الملوّنة أو على ورق شهادات. التحميل يعطيك ملف PDF واحداً فيه شهادة لكل اسم.</p>
+  <p class="note" style="margin-top:8px"><span dir="ltr">A4</span> أفقي — جاهزة للطباعة الملوّنة أو على ورق شهادات. التحميل يعطيك ملف PDF واحداً فيه شهادة لكل اسم.</p>
  </section>
 </div>
 </div>
@@ -194,6 +199,11 @@ var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){re
 var AN=function(n){return String(n).replace(/\d/g,function(c){return "٠١٢٣٤٥٦٧٨٩"[c]})};
 function cnt(n,one,two,few,many){return n===1?one:n===2?two:(n%100>=3&&n%100<=10)?AN(n)+" "+few:AN(n)+" "+many}
 function toast(t){var x=$("#toast");x.textContent=t;x.classList.add("show");clearTimeout(toast._);toast._=setTimeout(function(){x.classList.remove("show")},2600)}
+/* ===== الأرقام العربية على كل نص ظاهر (لا تمسّ الحقول ولا عناصر ltr ولا لوحة التفعيل) ===== */
+function skipTx(n){for(var p=n.parentNode;p&&p.nodeType===1;p=p.parentNode){var t=p.tagName;if(t==="SCRIPT"||t==="STYLE"||t==="TEXTAREA"||p.id==="actPanel"||p.getAttribute("dir")==="ltr")return true}return false}
+function tx(n){if(/[0-9]/.test(n.nodeValue)&&!skipTx(n))n.nodeValue=AN(n.nodeValue)}
+function txAll(root){var w=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT),n;while((n=w.nextNode()))tx(n)}
+try{new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==="characterData")tx(m.target);else Array.prototype.forEach.call(m.addedNodes,function(a){if(a.nodeType===3)tx(a);else if(a.nodeType===1)txAll(a)})})}).observe(document.body,{subtree:true,childList:true,characterData:true})}catch(e){}
 /* ===== الأنواع ===== */
 var TYPES={
  "شكر وتقدير":{title:"شهادة شكر وتقدير",pre:"تتقدّم إدارة المدرسة بخالص الشكر والتقدير إلى {اللقب}",body:"{السبب}، سائلين الله {له} دوام التوفيق والسداد.",reason:"تقديراً {لجهوده} المتميزة وعطائه المستمر"},
@@ -216,19 +226,34 @@ function fresh(){var t=TYPES["شكر وتقدير"];return {type:"شكر وتق�
  sigs:[{title:"قائد المدرسة",name:"",img:""},{title:"",name:"",img:""}],cur:0}}
 var S;
 /* ===== الأسماء ===== */
-function rows(){return String(S.namesRaw||"").split(/\r?\n/).map(function(l){var p=l.split(/\t|\s*\|\s*/).map(function(x){return x.trim()});return {name:p[0]||"",reason:p[1]||"",cls:p[2]||""}}).filter(function(r){return r.name})}
+var GW=/^(ذكر|أنثى|انثى|ذ|ث|ولد|بنت|بنين|بنات|طالب|طالبة|معلم|معلمة|male|female|m|f)$/i;
+function rows(){return String(S.namesRaw||"").split(/\r?\n/).map(function(l,ln){var p=l.split(/\t|\s*\|\s*/).map(function(x){return x.trim()}),g="",rest=[];
+ p.slice(1).forEach(function(x){if(!g&&GW.test(x))g=/^(ذكر|ذ|ولد|بنين|طالب|معلم|male|m)$/i.test(x)?"m":"f";else rest.push(x)});
+ return {name:p[0]||"",reason:rest[0]||"",cls:rest[1]||"",g:g,ln:ln}}).filter(function(r){return r.name})}
+function gOf(r){return r&&r.g||S.gender||"m"}
+function setRowG(k){var r=rows()[k];if(!r)return;var L=String(S.namesRaw).split(/\r?\n/),a=[r.name,r.reason,r.cls];while(a.length>1&&!a[a.length-1])a.pop();a.push(gOf(r)==="m"?"أنثى":"ذكر");L[r.ln]=a.join(" | ");S.namesRaw=L.join("\n");$("#namesRaw").value=S.namesRaw;save();renderNames();renderPreview()}
 /* ===== التاريخ ===== */
-function hijri(iso){try{return new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura-nu-arab",{day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(iso+"T00:00:00Z"))}catch(e){return iso}}
-function greg(iso){try{return new Intl.DateTimeFormat("ar-EG-u-nu-arab",{day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(iso+"T00:00:00Z"))+"م"}catch(e){return iso}}
+function hijri(iso){try{return AN(new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura-nu-arab",{day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(iso+"T00:00:00Z")))}catch(e){return AN(iso||"")}}
+function greg(iso){try{return AN(new Intl.DateTimeFormat("ar-EG-u-nu-arab",{day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(iso+"T00:00:00Z")))+"م"}catch(e){return AN(iso||"")}}
 /* ===== النص ===== */
-function fill(t,r){var g=G[S.gender];t=String(t||"");Object.keys(g).forEach(function(k){if(k.charAt(0)==="{")t=t.split(k).join(g[k])});
- var reason=r.reason||fill2(S.reason);t=t.split("{السبب}").join(reason).split("{الصف}").join(r.cls||"").split("{الاسم}").join(r.name);return t.replace(/\s+([،.])/g,"$1").replace(/\s{2,}/g," ").trim()}
-function fill2(t){var g=G[S.gender];t=String(t||"");Object.keys(g).forEach(function(k){if(k.charAt(0)==="{")t=t.split(k).join(g[k])});if(S.gender==="f")t=t.replace(/لتفوّقه/g,"لتفوّقها").replace(/لتميزه/g,"لتميزها").replace(/لتميّزه/g,"لتميّزها").replace(/وعطائه/g,"وعطائها");return t}
+/* صياغة المذكر والمؤنث لكل اسم: الرموز {له}… و«الطالب/ـة» وضمائر الكلمات الشائعة في الأسباب */
+var GEN_RE=/([^\s<>"'،,.()«»]+)\/ـة/g;
+var FEM=/(^|[\s،.«(])((?:و|ف|ب|ل|وب|ول|بل)?)(تفوّق|تفوق|تميّز|تميز|عطائ|أدائ|ادائ|جهود|جهد|مشاركت|تخرّج|تخرج|حضور|إنجاز|انجاز|اجتهاد|تعاون|إبداع|ابداع|التزام|حرص|انضباط|إخلاص|اخلاص|تفاني|سعي|مثابرت|تحصيل|نشاط|عمل)ه(?=$|[\s،.»)!؛:])/g;
+function gtx(t,g){var m=G[g]||G.m;t=String(t||"");Object.keys(m).forEach(function(k){if(k.charAt(0)==="{")t=t.split(k).join(m[k])});t=t.replace(GEN_RE,g==="f"?"$1ة":"$1");return g==="f"?t.replace(FEM,"$1$2$3ها"):t}
+function tidy(t){return t.replace(/\s(?:في|من|على|إلى|عن|ب)(?=\s*(?:[،.؛]|$))/g,"").replace(/\s+([،.,؛:!])/g,"$1").replace(/([،,؛])\s*([،.,؛])/g,"$2").replace(/^[\s،,؛.]+/,"").replace(/[\s،,؛]+$/,"").replace(/\s{2,}/g," ").trim()}
+function fill(t,r){var g=gOf(r),rs=/^[-—–]$/.test(r.reason||"")?"":(r.reason||S.reason);t=gtx(t,g);
+ if(!r.cls)t=t.replace(/\s*(?:(?:في|من|لل|ب)\s*)?(?:ال)?صف\s*\{الصف\}/g,"");
+ t=t.split("{السبب}").join(gtx(rs,g)).split("{الصف}").join(r.cls||"").split("{الاسم}").join(r.name||"");return AN(tidy(t))}
+/* صفة الموقِّع بحسب جنسه: «قائد/ـة المدرسة» أو «قائد المدرسة» تصير «قائدة المدرسة» للأنثى */
+var SIGW=/(^|\s)(ال)?(قائد|وكيل|مدير|مساعد|معلم|مرشد|مشرف|رئيس|منسق|رائد|مدرب|أمين|مسؤول|عميد|نائب|طلابي|تربوي|صحي|إداري|اداري|تعليمي)(?=\s|$)/g;
+function sigG(s){return s.g||S.gender||"m"}
+function sigT(s){var g=sigG(s),t=String(s.title||"").replace(GEN_RE,g==="f"?"$1ة":"$1");return AN(g==="f"?t.replace(SIGW,"$1$2$3ة"):t)}
 function qrSVG(u){try{var q=qrcode(0,"M");q.addData(u);q.make();return q.createSvgTag({cellSize:4,margin:0})}catch(e){return ""}}
 function logo(side){var v=side==="R"?S.logoR:S.logoL,img=side==="R"?S.imgR:S.imgL;if(v==="moe")return MOE;if(v==="vision")return VIS;if(v==="custom")return img;return ""}
 /* ===== زخارف ===== */
 function corners(c){var p='<path d="M3 34V3h31" stroke="'+c+'" stroke-width="1.8" fill="none"/><path d="M9 24V9h15" stroke="'+c+'" stroke-width=".9" fill="none"/><path d="M3 3l5 0-5 5z" fill="'+c+'"/><rect x="13" y="13" width="4" height="4" transform="rotate(45 15 15)" fill="'+c+'"/>';
- return [["top","right","scale(-1,1)"],["top","left",""],["bottom","right","scale(-1,-1)"],["bottom","left","scale(1,-1)"]].map(function(x){return '<svg class="deco" viewBox="0 0 40 40" style="width:17mm;height:17mm;'+x[0]+':11mm;'+x[1]+':11mm;transform:'+(x[2]||"none")+'">'+p+'</svg>'}).join("")}
+ /* القلب داخل الـSVG لا بـCSS transform — html2canvas يُسقط الزوايا المقلوبة بالـCSS من PDF والصور */
+ return [["top","right","translate(40 0) scale(-1 1)"],["top","left",""],["bottom","right","translate(40 40) scale(-1 -1)"],["bottom","left","translate(0 40) scale(1 -1)"]].map(function(x){return '<svg class="deco" viewBox="0 0 40 40" style="width:17mm;height:17mm;'+x[0]+':11mm;'+x[1]+':11mm"><g'+(x[2]?' transform="'+x[2]+'"':'')+'>'+p+'</g></svg>'}).join("")}
 function pattern(c){return '<svg class="pat" width="100%" height="100%"><defs><pattern id="pz" width="18" height="18" patternUnits="userSpaceOnUse"><path d="M9 1l2.2 5.8L17 9l-5.8 2.2L9 17l-2.2-5.8L1 9l5.8-2.2z" fill="'+c+'" opacity=".32"/><circle cx="0" cy="0" r="1.6" fill="'+c+'"/><circle cx="16" cy="16" r="1.6" fill="'+c+'"/></pattern></defs><rect width="100%" height="100%" fill="url(#pz)"/></svg>'}
 function medal(c,g){return '<svg class="deco" viewBox="0 0 60 80" style="width:22mm;height:30mm;top:16mm;left:20mm"><path d="M18 40l-8 36 12-8 8 12 6-36z" fill="'+c+'"/><path d="M42 40l8 36-12-8-8 12-6-36z" fill="'+c+'" opacity=".8"/><circle cx="30" cy="28" r="24" fill="'+g+'"/><circle cx="30" cy="28" r="18" fill="none" stroke="#fff" stroke-width="1.6" opacity=".8"/><path d="M30 16l3.6 7.4 8.1 1.2-5.9 5.7 1.4 8.1L30 34.6l-7.2 3.8 1.4-8.1-5.9-5.7 8.1-1.2z" fill="#fff"/></svg>'}
 /* ===== الشهادة ===== */
@@ -240,14 +265,15 @@ function cert(r,wm){var col=COLORS[S.color]||COLORS[0],c=col[0],g=col[1],o=S.org
  if(t==="wishah")deco='<div class="r2"></div><div class="r1"></div><div class="r4"></div><div class="r3"></div>';
  if(t==="zukhrufi")deco=pattern(c)+'<div class="cover"></div>';
  if(t==="aniq")deco='<div class="ln1"></div><div class="ln2"></div>';
- var org=o.show?'<div class="org"><div>المملكة العربية السعودية</div><div>وزارة التعليم</div>'+(o.admin?'<div>الإدارة العامة للتعليم ب'+esc(o.admin.replace(/^ب/,""))+'</div>':'')+(o.school?'<div><b>'+esc(o.school)+'</b></div>':'')+'</div>':'<div></div>';
+ var org=o.show?'<div class="org"><div>المملكة العربية السعودية</div><div>وزارة التعليم</div>'+(o.admin?'<div>الإدارة العامة للتعليم ب'+AN(esc(o.admin.replace(/^ب/,"")))+'</div>':'')+(o.school?'<div><b>'+AN(esc(o.school))+'</b></div>':'')+'</div>':'<div></div>';
  var hd='<div class="hd">'+org+(lr&&t!=="asri"?'<img class="lg r" src="'+lr+'" alt="">':'<span></span>')+(ll?'<img class="lg l" src="'+ll+'" alt="">':'<span></span>')+'</div>';
  var dt=S.dmode==="none"?"":(S.dmode==="hg"?hijri(S.date)+'<br>'+greg(S.date):hijri(S.date));
- var sigs=(S.sigs||[]).filter(function(s){return s.title||s.name||s.img}).map(function(s){return '<div class="sig">'+(s.img?'<img class="s" src="'+s.img+'" alt="">':'<div class="blank"></div>')+'<b>'+esc(s.title)+'</b>'+esc(s.name)+'</div>'}).join("");
+ var sigs=(S.sigs||[]).filter(function(s){return s.title||s.name||s.img}).map(function(s){return '<div class="sig">'+(s.img?'<img class="s" src="'+s.img+'" alt="">':'<div class="blank"></div>')+(s.title?'<b>'+esc(sigT(s))+'</b>':'')+AN(esc(s.name))+'</div>'}).join("");
+ var tt=AN(esc(S.title)),pre=fill(S.pre,r),bd=fill(S.body,r);
  return '<div class="cert t-'+t+'" style="--c:'+c+';--g:'+g+'">'+deco+'<div class="in">'+hd+
-  '<div class="mid"><div class="tt">'+esc(S.title)+'</div><div class="pre">'+esc(fill(S.pre,r))+'</div>'+
-  '<div class="nm" style="font-family:\''+S.nameFont+'\',serif">'+esc(r.name)+'</div>'+
-  '<div class="bd">'+esc(fill(S.body,r))+'</div></div>'+
+  '<div class="mid">'+(tt?'<div class="tt">'+tt+'</div>':'')+(pre?'<div class="pre">'+esc(pre)+'</div>':'')+
+  '<div class="nm" style="font-family:\''+S.nameFont+'\',serif">'+AN(esc(r.name))+'</div>'+
+  (bd?'<div class="bd">'+esc(bd)+'</div>':'')+'</div>'+
   '<div class="ft"><div class="dt">'+(dt?'<b style="color:var(--c)">التاريخ</b><br>'+dt:'')+'</div><div class="sigs">'+sigs+'</div><div class="qr">'+(o.qr&&/^https?:/.test(o.qr)?qrSVG(o.qr):'')+'</div></div>'+
   '</div>'+(S.seal?'<img class="seal" src="'+S.seal+'" alt="">':'')+(wm?'<div class="wm">معاينة — مجودة</div>':'')+'<div class="brandln">majoodah.com</div></div>'}
 /* ===== الواجهة ===== */
@@ -259,20 +285,38 @@ function renderTpls(){var r=rows()[0]||{name:"اسم المكرَّم"};$("#tpls
  $$("#sws .sw").forEach(function(b){b.addEventListener("click",function(){S.color=+b.dataset.k;save();renderAll()})})}
 function renderFields(){$$("[data-s]").forEach(function(i){i.value=S[i.dataset.s]==null?"":S[i.dataset.s]});$$("[data-o]").forEach(function(i){i.value=S.org[i.dataset.o]||""});$("#orgShow").checked=!!S.org.show;$("#namesRaw").value=S.namesRaw;$("#selR").value=S.logoR;$("#selL").value=S.logoL;
  $("#imgR").src=logo("R")||"data:,";$("#imgL").src=logo("L")||"data:,";$("#imgSeal").src=S.seal||"data:,";renderSigs()}
-function renderSigs(){$("#sigs").innerHTML=S.sigs.map(function(s,k){return '<div class="slot" style="flex-wrap:wrap"><input data-g="'+k+'" data-f="title" value="'+esc(s.title)+'" placeholder="الصفة (مثال: قائد المدرسة)" style="flex:1;min-width:120px;border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:5px 8px"><input data-g="'+k+'" data-f="name" value="'+esc(s.name)+'" placeholder="الاسم" style="flex:1;min-width:120px;border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:5px 8px">'+(s.img?'<img src="'+s.img+'" alt="">':'')+'<button class="btn small" data-up="'+k+'">'+(s.img?'تغيير التوقيع':'صورة التوقيع')+'</button>'+(s.img?'<button class="btn small" data-rm="'+k+'">حذف</button>':'')+'</div>'}).join("")+(S.sigs.length<3?'<button class="btn small" id="addSig" style="margin-bottom:8px">+ توقيع</button>':'');
- $$("#sigs [data-g]").forEach(function(i){i.addEventListener("input",function(){S.sigs[+i.dataset.g][i.dataset.f]=i.value;save();renderPreview()})});
+function renderSigs(){$("#sigs").innerHTML=S.sigs.map(function(s,k){return '<div class="slot" style="flex-wrap:wrap"><input data-g="'+k+'" data-f="title" value="'+esc(s.title)+'" placeholder="الصفة (مثال: قائد المدرسة)" style="flex:1;min-width:120px;border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:5px 8px"><input data-g="'+k+'" data-f="name" value="'+esc(s.name)+'" placeholder="الاسم" style="flex:1;min-width:120px;border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:5px 8px"><select data-g="'+k+'" data-f="g" aria-label="جنس الموقِّع" style="width:auto;border:1px solid var(--line);background-color:var(--paper);border-radius:8px;padding:5px 8px;font-size:13px"><option value="m"'+(sigG(s)==="m"?" selected":"")+'>ذكر</option><option value="f"'+(sigG(s)==="f"?" selected":"")+'>أنثى</option></select>'+(s.img?'<img src="'+s.img+'" alt="">':'')+'<button class="btn small" data-draw="'+k+'">ارسم التوقيع</button><button class="btn small" data-up="'+k+'">'+(s.img?'تغيير الصورة':'رفع صورة')+'</button>'+(s.img?'<button class="btn small" data-rm="'+k+'">حذف</button>':'')+'</div>'}).join("")+(S.sigs.length<3?'<button class="btn small" id="addSig" style="margin-bottom:8px">+ توقيع</button>':'');
+ $$("#sigs [data-g]").forEach(function(i){i.addEventListener(i.tagName==="SELECT"?"change":"input",function(){S.sigs[+i.dataset.g][i.dataset.f]=i.value;save();renderPreview()})});
+ $$("#sigs [data-draw]").forEach(function(b){b.addEventListener("click",function(){drawSig(+b.dataset.draw)})});
  $$("#sigs [data-up]").forEach(function(b){b.addEventListener("click",function(){pick(function(d){S.sigs[+b.dataset.up].img=d;save();renderSigs();renderPreview()},600,true)})});
  $$("#sigs [data-rm]").forEach(function(b){b.addEventListener("click",function(){S.sigs[+b.dataset.rm].img="";save();renderSigs();renderPreview()})});
  if($("#addSig"))$("#addSig").addEventListener("click",function(){S.sigs.push({title:"",name:"",img:""});save();renderSigs()})}
+/* رسم التوقيع بالإصبع أو الفأرة — يُقصّ على حدود الرسم ويُحفظ PNG شفافاً */
+function drawSig(k){
+ var m=document.createElement("div");m.className="modal";m.innerHTML='<div class="card" role="dialog" aria-modal="true" aria-label="رسم التوقيع"><h2 style="font-size:17px;margin:0">ارسم التوقيع</h2><canvas width="1000" height="400"></canvas><div class="row"><button type="button" class="btn primary" data-a="ok">حفظ التوقيع</button><button type="button" class="btn" data-a="clr">مسح</button><div class="spacer"></div><button type="button" class="btn" data-a="x">إلغاء</button></div></div>';
+ document.body.appendChild(m);
+ var cv=$("canvas",m),x=cv.getContext("2d"),down=false,any=false,last=null,bb=[1e9,1e9,-1,-1];
+ x.lineCap="round";x.lineJoin="round";x.lineWidth=6;x.strokeStyle=x.fillStyle="#16233f";
+ function pt(e){var r=cv.getBoundingClientRect();return [(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]}
+ function grow(p){bb[0]=Math.min(bb[0],p[0]);bb[1]=Math.min(bb[1],p[1]);bb[2]=Math.max(bb[2],p[0]);bb[3]=Math.max(bb[3],p[1])}
+ cv.addEventListener("pointerdown",function(e){e.preventDefault();down=true;last=pt(e);grow(last);try{cv.setPointerCapture(e.pointerId)}catch(_){}x.beginPath();x.arc(last[0],last[1],3,0,7);x.fill();any=true});
+ cv.addEventListener("pointermove",function(e){if(!down)return;var p=pt(e);x.beginPath();x.moveTo(last[0],last[1]);x.lineTo(p[0],p[1]);x.stroke();last=p;grow(p)});
+ ["pointerup","pointercancel","pointerleave"].forEach(function(t){cv.addEventListener(t,function(){down=false})});
+ function close(){m.remove()}
+ m.addEventListener("click",function(e){var a=e.target.getAttribute&&e.target.getAttribute("data-a");if(e.target===m||a==="x")close();
+  if(a==="clr"){x.clearRect(0,0,cv.width,cv.height);any=false;bb=[1e9,1e9,-1,-1]}
+  if(a==="ok"){if(!any){toast("ارسم التوقيع أولاً");return}var pad=14,sx=Math.max(0,bb[0]-pad),sy=Math.max(0,bb[1]-pad),w=Math.min(cv.width,bb[2]+pad)-sx,h=Math.min(cv.height,bb[3]+pad)-sy;
+   var o=document.createElement("canvas");o.width=w;o.height=h;o.getContext("2d").drawImage(cv,sx,sy,w,h,0,0,w,h);if(S.sigs[k]){S.sigs[k].img=o.toDataURL("image/png");save();renderSigs();renderPreview();toast("أُضيف التوقيع")}close()}})}
 function renderNames(){var R=rows();if(S.cur>=R.length)S.cur=Math.max(0,R.length-1);$("#nCount").textContent=R.length?cnt(R.length,"اسم واحد","اسمان","أسماء","اسماً"):"";
- $("#names").innerHTML=R.map(function(r,k){return '<button data-k="'+k+'" aria-current="'+(k===S.cur)+'"><span class="i">'+AN(k+1)+'</span><span>'+esc(r.name)+(r.reason?' <span class="note">— '+esc(r.reason)+'</span>':'')+'</span></button>'}).join("")||'<div class="note" style="padding:10px">لا أسماء بعد.</div>';
- $$("#names button").forEach(function(b){b.addEventListener("click",function(){S.cur=+b.dataset.k;save();renderNames();renderPreview()})})}
-function renderPreview(){var R=rows(),r=R[S.cur]||{name:"اسم المكرَّم"};$("#pvscale").innerHTML=cert(r,!ACTIVE);$("#pvName").textContent=R.length?(AN(S.cur+1)+" / "+AN(R.length)+" — "+r.name):"أضف الأسماء";$("#pvNote").textContent=ACTIVE?"":"تظهر علامة «معاينة» حتى التفعيل";fit()}
+ $("#names").innerHTML=R.map(function(r,k){return '<div class="nr"><button data-k="'+k+'" aria-current="'+(k===S.cur)+'"><span class="i">'+AN(k+1)+'</span><span>'+esc(r.name)+(r.reason&&!/^[-—–]$/.test(r.reason)?' <span class="note">— '+esc(r.reason)+'</span>':'')+'</span></button><button class="gb" data-gk="'+k+'" title="تبديل صيغة المذكر/المؤنث لهذا الاسم">'+(gOf(r)==="f"?"أنثى":"ذكر")+'</button></div>'}).join("")||'<div class="note" style="padding:10px">لا أسماء بعد.</div>';
+ $$("#names [data-k]").forEach(function(b){b.addEventListener("click",function(){S.cur=+b.dataset.k;save();renderNames();renderPreview()})});
+ $$("#names [data-gk]").forEach(function(b){b.addEventListener("click",function(){S.cur=+b.dataset.gk;setRowG(+b.dataset.gk)})})}
+function renderPreview(){var R=rows(),r=R[S.cur]||{name:"اسم المكرَّم"};$("#pvscale").innerHTML=cert(r,!ACTIVE);$("#pvName").textContent=R.length?(AN(S.cur+1)+" / "+AN(R.length)+" — "+r.name):"أضف الأسماء";$("#pvNote").textContent=ACTIVE?"":"تظهر علامة «معاينة» حتى التفعيل";fit();markPrint()}
 function fit(){var b=$("#pvbox"),s=$("#pvscale"),c=s.firstChild;if(!c)return;var k=Math.min(1,(b.clientWidth-32)/c.offsetWidth);s.style.transform="scale("+k+")";s.style.height=(c.offsetHeight*k)+"px";s.style.width=c.offsetWidth+"px"}
 window.addEventListener("resize",function(){fit();renderTpls()});
 function renderAll(){renderTypes();renderTpls();renderFields();renderNames();renderPreview()}
 /* ===== الأحداث ===== */
-$$("[data-s]").forEach(function(i){i.addEventListener(i.tagName==="SELECT"||i.type==="date"?"change":"input",function(){S[i.dataset.s]=i.value;save();renderPreview();if(i.dataset.s==="gender"||i.dataset.s==="nameFont")renderTpls()})});
+$$("[data-s]").forEach(function(i){i.addEventListener(i.tagName==="SELECT"||i.type==="date"?"change":"input",function(){S[i.dataset.s]=i.value;save();renderPreview();if(i.dataset.s==="gender"){renderNames();renderSigs()}if(i.dataset.s==="gender"||i.dataset.s==="nameFont")renderTpls()})});
 $$("[data-o]").forEach(function(i){i.addEventListener("input",function(){S.org[i.dataset.o]=i.value;save();renderPreview()})});
 $("#orgShow").addEventListener("change",function(){S.org.show=this.checked;save();renderPreview();renderTpls()});
 $("#namesRaw").addEventListener("input",function(){S.namesRaw=this.value;save();renderNames();renderPreview()});
@@ -281,7 +325,7 @@ $("#prevN").addEventListener("click",function(){if(S.cur>0){S.cur--;renderNames(
 $("#nextN").addEventListener("click",function(){if(S.cur<rows().length-1){S.cur++;renderNames();renderPreview()}});
 $("#xls").addEventListener("change",function(e){var f=e.target.files[0];e.target.value="";if(!f)return;if(!window.XLSX){toast("تعذّر تحميل قارئ Excel — الصق الأسماء نسخاً");return}
  f.arrayBuffer().then(function(buf){var wb=XLSX.read(buf,{type:"array"}),sh=wb.Sheets[wb.SheetNames[0]],a=XLSX.utils.sheet_to_json(sh,{header:1,blankrows:false});
-  var L=a.map(function(r){return r.filter(function(x){return x!=null&&String(x).trim()!==""}).slice(0,3).map(function(x){return String(x).trim()}).join(" | ")}).filter(function(x){return x&&!/^(الاسم|اسم الطالب|name)/i.test(x)});
+  var L=a.map(function(r){return r.filter(function(x){return x!=null&&String(x).trim()!==""}).slice(0,4).map(function(x){return String(x).trim()}).join(" | ")}).filter(function(x){return x&&!/^(الاسم|اسم الطالب|اسم الطالبة|name)/i.test(x)});
   S.namesRaw=L.join("\n");$("#namesRaw").value=S.namesRaw;S.cur=0;save();renderNames();renderPreview();toast("استُورد "+cnt(L.length,"اسم واحد","اسمان","أسماء","اسماً"))}).catch(function(){toast("تعذّرت قراءة الملف")})});
 var pickCb=null,pickMax=600,pickPng=true;
 function pick(cb,max,png){pickCb=cb;pickMax=max||600;pickPng=png!==false;$("#imgPick").click()}
@@ -293,7 +337,19 @@ $("#sealDel").addEventListener("click",function(){S.seal="";save();renderAll()})
 function busy(t,n){var b=$("#busyBox");if(!b){b=document.createElement("div");b.className="busy";b.id="busyBox";b.innerHTML='<div><b id="busyT"></b><progress id="busyP" max="1" value="0"></progress></div>';document.body.appendChild(b)}$("#busyT").textContent=t;$("#busyP").max=n;$("#busyP").value=0}
 function unbusy(){var b=$("#busyBox");if(b)b.remove()}
 function need(){if(ACTIVE)return true;openAct();toast("التحميل يتطلب التفعيل — المعاينة مجانية");return false}
-function renderOne(r){var host=document.createElement("div");host.style.cssText="position:fixed;left:-12000px;top:0";host.innerHTML=cert(r,false);document.body.appendChild(host);return html2canvas(host.firstChild,{scale:2,backgroundColor:"#fff",useCORS:true,logging:false}).then(function(c){host.remove();return c},function(e){host.remove();throw e})}
+/* انتظار تحميل الصور (الشعارات والتوقيعات والختم) قبل الطباعة والتصدير */
+function imgsReady(root,ms){var L=$$("img",root).filter(function(im){return im.getAttribute("src")});return Promise.race([Promise.all(L.map(function(im){return (im.complete&&im.naturalWidth?Promise.resolve():new Promise(function(ok){im.addEventListener("load",ok);im.addEventListener("error",ok)})).then(function(){return im.decode?im.decode().catch(function(){}):null})})),new Promise(function(ok){setTimeout(ok,ms||5000)})])}
+/* html2canvas يمطّ الصور ولا يدعم object-fit — نحسب المقاس المحتوى صراحةً */
+function fitImgs(root){$$("img",root).forEach(function(im){var w=im.naturalWidth,h=im.naturalHeight,bw=im.offsetWidth,bh=im.offsetHeight;if(!w||!h||!bw||!bh)return;var k=Math.min(bw/w,bh/h);im.style.maxWidth="none";im.style.width=(w*k)+"px";im.style.height=(h*k)+"px";if(im.classList.contains("s"))im.style.marginTop=(bh-h*k)+"px"})}
+/* html2canvas يُسقط أو يزيح الـSVG المضمّن (الزوايا والنقش ورمز QR) — نحوّلها إلى صور بنفس المقاس والموضع */
+function svgImgs(root){var b0=root.getBoundingClientRect();$$("svg",root).forEach(function(s){var r=s.getBoundingClientRect();if(!r.width||!r.height)return;var k=s.cloneNode(true),im=new Image();
+ k.setAttribute("xmlns","http://www.w3.org/2000/svg");k.setAttribute("width",r.width);k.setAttribute("height",r.height);k.removeAttribute("style");k.removeAttribute("class");
+ im.className=s.getAttribute("class")||"";im.style.cssText=(s.getAttribute("style")||"")+";width:"+r.width+"px;height:"+r.height+"px;display:block";im.alt="";
+ im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(new XMLSerializer().serializeToString(k));s.parentNode.replaceChild(im,s)})}
+/* html2canvas لا يطبّق CSS filter — نخبز الشعار الأبيض لتصميم «عصري» في الصورة نفسها */
+function bakeFilters(root){$$("img.vlogo",root).forEach(function(im){try{var w=im.naturalWidth,h=im.naturalHeight;if(!w||!h)return;var s=Math.max(1,600/w),cv=document.createElement("canvas");cv.width=Math.round(w*s);cv.height=Math.round(h*s);var x=cv.getContext("2d");x.drawImage(im,0,0,cv.width,cv.height);x.globalCompositeOperation="source-in";x.fillStyle="#fff";x.fillRect(0,0,cv.width,cv.height);im.style.filter="none";im.src=cv.toDataURL("image/png")}catch(e){}})}
+function renderOne(r){var host=document.createElement("div");host.style.cssText="position:fixed;left:-12000px;top:0";host.innerHTML=cert(r,false);document.body.appendChild(host);svgImgs(host);
+ return imgsReady(host).then(function(){bakeFilters(host);return imgsReady(host)}).then(function(){fitImgs(host);return html2canvas(host.firstChild,{scale:2,backgroundColor:"#fff",useCORS:true,logging:false})}).then(function(c){host.remove();return c},function(e){host.remove();throw e})}
 function safe(n){return String(n).replace(/[\\/:*?"<>|]/g,"").slice(0,60)||"شهادة"}
 $("#btnPdf").addEventListener("click",function(){if(!need())return;var R=rows();if(!R.length){toast("أضف الأسماء أولاً");return}if(!window.jspdf||!window.html2canvas){toast("تعذّر تحميل أدوات PDF — استخدم الطباعة");return}
  busy("جارٍ تجهيز الشهادات…",R.length);var pdf=new jspdf.jsPDF({orientation:"landscape",unit:"mm",format:"a4"}),i=0;
@@ -303,9 +359,14 @@ $("#btnZip").addEventListener("click",function(){if(!need())return;var R=rows();
  busy("جارٍ تجهيز الصور…",R.length);var z=new JSZip(),i=0;
  (document.fonts?document.fonts.ready:Promise.resolve()).then(function step(){if(i>=R.length){return z.generateAsync({type:"blob"}).then(function(b){var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="شهادات-"+safe(S.title)+".zip";document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},800);unbusy();toast("حُمّلت "+cnt(R.length,"صورة واحدة","صورتان","صور","صورة"))})}
   return renderOne(R[i]).then(function(c){z.file(AN(i+1)+"-"+safe(R[i].name)+".jpg",c.toDataURL("image/jpeg",.92).split(",")[1],{base64:true});i++;$("#busyP").value=i;$("#busyT").textContent="صورة "+AN(i)+" من "+AN(R.length);return step()})}).catch(function(){unbusy();toast("تعذّر إنشاء الصور")})});
+/* منطقة الطباعة تُجهَّز مسبقاً بعد كل تعديل (حتى تكون الصور محمّلة إن طبع المستخدم بـ Ctrl+P)، وتُعاد قبل الطباعة إن تغيّر شيء */
+var PDIRTY=true,pT=null;
+function buildPrint(){if(!S)return;$("#printArea").innerHTML=rows().map(function(r){return cert(r,!ACTIVE)}).join("");PDIRTY=false}
+function markPrint(){PDIRTY=true;clearTimeout(pT);pT=setTimeout(buildPrint,1200)}
+window.addEventListener("beforeprint",function(){if(PDIRTY||!$("#printArea").innerHTML)buildPrint()});
 $("#btnPrint").addEventListener("click",function(){var R=rows();if(!R.length){toast("أضف الأسماء أولاً");return}if(!ACTIVE){openAct();toast("تُطبع بعلامة «معاينة» — فعّل لإزالتها")}
- $("#printArea").innerHTML=R.map(function(r){return cert(r,!ACTIVE)}).join("");setTimeout(function(){window.print()},ACTIVE?300:1200)});
-window.addEventListener("afterprint",function(){$("#printArea").innerHTML=""});
+ if(PDIRTY||!$("#printArea").innerHTML)buildPrint();clearTimeout(pT);
+ Promise.all([imgsReady($("#printArea")),new Promise(function(ok){setTimeout(ok,ACTIVE?150:1200)})]).then(function(){window.print()})});
 /* ===== التفعيل (متوافق مع الأكواد السابقة) ===== */
 var ACTIVE=false,AKEY="mj_shahadat_act";
 function sha(s){return crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)).then(function(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return ("0"+x.toString(16)).slice(-2)}).join("")})}
@@ -318,7 +379,7 @@ $("#actForm").addEventListener("submit",function(e){e.preventDefault();var c=nor
  sha(APPKEY+":"+c).then(function(h){if(HASHES.indexOf(h)>=0){try{localStorage.setItem(AKEY,h)}catch(e){}setActive(true);m.className="msg ok";m.textContent="تم التفعيل — حمّل شهاداتك PDF أو صوراً.";toast("تم التفعيل");setTimeout(function(){$("#actPanel").hidden=true},1500)}else{m.className="msg err";m.textContent="الكود غير صحيح. تأكد من كتابته كما وصلك في رسالة الطلب."}}).catch(function(){m.className="msg err";m.textContent="افتح الصفحة في متصفح حديث لإتمام التفعيل."})});
 try{var h0=localStorage.getItem(AKEY);if(h0&&HASHES.indexOf(h0)>=0)ACTIVE=true}catch(e){}
 /* ===== التشغيل ===== */
-Promise.race([load(),new Promise(function(ok){setTimeout(function(){ok(null)},1500)})]).then(function(st){if(S)return;S=st||fresh();var f=fresh();Object.keys(f).forEach(function(k){if(S[k]==null)S[k]=f[k]});setActive(ACTIVE);renderAll();if(document.fonts)document.fonts.ready.then(function(){fit();renderTpls()})});
+Promise.race([load(),new Promise(function(ok){setTimeout(function(){ok(null)},1500)})]).then(function(st){if(S)return;S=st||fresh();var f=fresh();Object.keys(f).forEach(function(k){if(S[k]==null)S[k]=f[k]});setActive(ACTIVE);renderAll();txAll();if(document.fonts)document.fonts.ready.then(function(){fit();renderTpls()})});
 })();
 </script>
 
