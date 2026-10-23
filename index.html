@@ -207,31 +207,33 @@ button,input,textarea,select{font:inherit;color:inherit}
 .cert.Z .zf{position:absolute;display:block;z-index:1;pointer-events:none}
 .cert.Z .zbf{position:absolute;display:block;z-index:3;pointer-events:none;filter:drop-shadow(.4mm .9mm .6mm rgba(60,50,20,.28))}
 .cert.Z .cutl{position:absolute;left:0;top:0;width:100%;height:100%;z-index:6;pointer-events:none}
-.cert.Z .zt{position:absolute;left:92mm;right:92mm;top:29mm;height:29mm;display:flex;align-items:center;justify-content:center;z-index:2}
+.cert.Z .zcol{position:absolute;left:40mm;right:40mm;top:28mm;bottom:31mm;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;z-index:2}
+.cert.Z .zt{height:27mm;display:flex;align-items:center;justify-content:center;flex:none}
 .cert.Z .zt .tt{margin:0}
-.cert.Z .zb{position:absolute;left:56mm;right:56mm;top:60mm;height:93mm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.5mm;z-index:2}
-.cert.Z .zpre{text-wrap:balance;font-size:16.5pt;line-height:1.85;color:var(--c);max-width:178mm}
-.cert.Z .zbd{text-wrap:balance;font-size:17.5pt;line-height:2.05;max-width:184mm}
-.cert.Z .nmi{color:var(--g);font-weight:700;font-size:1.42em;line-height:1;padding:0 1mm;white-space:nowrap}
-.cert.Z .nm{font-size:30pt;color:var(--g);min-width:0;padding:0 6mm}
+.cert.Z .zb{display:flex;flex-direction:column;align-items:center;gap:1.2mm;flex:none;width:100%}
+.cert.Z .zpre{text-wrap:balance;font-size:17.5pt;line-height:1.75;color:var(--c);max-width:176mm;margin-bottom:2.5mm}
+.cert.Z .zbd{text-wrap:balance;font-size:18.5pt;line-height:1.75;max-width:180mm}
+.cert.Z .nm{color:var(--g);font-weight:700;line-height:1.3;min-width:0;padding:0;margin:1mm 0 1.5mm;white-space:nowrap;max-width:172mm}
 .cert.Z .zm{position:absolute;left:32mm;top:29mm;width:52mm;display:flex;flex-direction:column;align-items:center;gap:1.6mm;z-index:2;text-align:center}
 .cert.Z .zm .lgs{display:flex;gap:3mm;align-items:center;justify-content:center}
 .cert.Z .zm .lg{height:12.5mm;max-width:24mm}
 .cert.Z .zm .orgs{max-width:52mm;text-align:center;font-family:"IBM Plex Sans Arabic",sans-serif;font-size:8pt;color:#5a5646}
 .cert.Z .zm .dt{min-width:0;text-align:center;font-size:9.5pt;font-family:"IBM Plex Sans Arabic",sans-serif;color:#5a5646}
-.cert.Z .zs{position:absolute;left:134mm;right:35mm;top:156mm;height:27mm;display:flex;justify-content:space-around;align-items:flex-end;gap:6mm;z-index:2}
-.cert.Z .zs .sig{min-width:44mm;font-size:11.5pt;font-family:"Amiri",serif;color:#3a372c}
+.cert.Z .zs{align-self:flex-start;width:118mm;margin-inline-start:6mm;display:flex;justify-content:space-around;align-items:flex-end;gap:8mm;flex:none}
+.cert.Z .zs .sig{min-width:46mm;font-size:12.5pt;font-family:"Amiri",serif;color:#3a372c}
 .cert.Z .zs .sig i{display:block;border-top:.35mm dotted var(--g);margin:0 3mm 1mm}
-.cert.Z .zs .sig b{display:block;color:var(--c);font-size:12pt;font-weight:700}
+.cert.Z .zs .sig b{display:block;color:var(--c);font-size:13.5pt;font-weight:700}
 .cert.Z .zs .sig img.s{height:13mm;max-width:42mm;object-fit:contain;display:block;margin:0 auto -1mm}
 .cert.Z .zs .sig .blank{height:11mm}
 .cert.Z .zq{position:absolute;left:33mm;top:84mm;z-index:2}
 .cert.Z .zq .qb svg{width:17mm;height:17mm}
 .cert.Z .brandln{bottom:1.5mm;color:#c4cbc9}
 .zpg{position:relative;overflow:hidden;background:#fff}
-.zpg.a5l{width:210mm;height:148.5mm}
+.zpg.a5l{width:210mm;height:148mm}
 .zpg.a4p{width:210mm;height:297mm}
-.zpg .zsc{position:absolute;left:0;width:297mm;height:210mm;transform:scale(.70707);transform-origin:top left}
+/* zoom (لا transform) حتى يصغر صندوق التخطيط نفسه فلا يفيض إلى الصفحة التالية عند الطباعة */
+.zpg{break-inside:avoid;contain:paint}
+.zpg .zsc{position:absolute;left:0;width:297mm;height:210mm;zoom:.70707}
 .tpl .cap .cut{font-size:11px;color:var(--teal);font-weight:600}
 .zopt{display:grid;gap:12px}
 .zopt .row{gap:10px}
@@ -549,15 +551,20 @@ function certZ(r,wm,t,P){var o=S.org,lr=logo("R"),ll=logo("L"),zv=Z.v[t.zv],C=Z.
  var dt=S.dmode==="none"?"":(S.dmode==="hg"?hijri(S.date)+'<br>'+greg(S.date):hijri(S.date));
  var meta=(lr||ll?'<div class="lgs">'+(lr?'<img class="lg" src="'+lr+'" alt="">':'')+(ll?'<img class="lg" src="'+ll+'" alt="">':'')+'</div>':'')+(L.length?'<div class="orgs">'+L.map(function(x){return '<div>'+x+'</div>'}).join("")+'</div>':'')+(dt?'<div class="dt">'+dt+'</div>':'');
  var pre=fill(S.pre,r),bd=fill(S.body,r),inl=hasInl();
- var nm='<span class="nmi" style="font-family:\''+S.nameFont+'\',serif">'+AN(esc(r.name))+'</span>';
+ var nmL='<div class="nm" style="font-family:\''+S.nameFont+'\',serif;font-size:'+nmPt(r.name)+'pt">'+AN(esc(r.name))+'</div>';
  var sigs=(S.sigs||[]).filter(function(s){return s.title||s.name||s.img}).map(function(s){return '<div class="sig">'+(s.img?'<img class="s" src="'+s.img+'" alt="">':'<div class="blank"></div>')+'<i></i>'+(s.title?'<b>'+esc(sigT(s))+'</b>':'')+AN(esc(s.name))+'</div>'}).join("");
  var cut=S.zCut==="none"?"":'<svg class="cutl" viewBox="0 0 297 210" xmlns="http://www.w3.org/2000/svg"><path d="'+zD(zPts(zCutKey(),t.zv))+'" fill="none" stroke="#8d8d8d" stroke-width="'+(zCutKey()==="a5"?.36:.28)+'" stroke-dasharray="'+(zCutKey()==="a5"?"2.6 1.8":"2 1.4")+'"/></svg>';
  return '<div class="cert Z T-'+t.id+'" style="--c:'+P.c+';--d:'+P.d+';--g:'+P.g+';--s:'+P.s+'">'+bg+art+bf+
   (meta?'<div class="zm">'+meta+'</div>':'')+(o.qr&&/^https?:/.test(o.qr)?'<div class="zq"><div class="qb">'+qrSVG(o.qr)+'</div></div>':'')+
-  '<div class="zt">'+titleHTML(t,P)+'</div>'+
-  '<div class="zb">'+(pre?'<div class="zpre">'+inlName(esc(pre),nm)+'</div>':'')+(inl?'':'<div class="nm" style="font-family:\''+S.nameFont+'\',serif">'+AN(esc(r.name))+'</div>')+(bd?'<div class="zbd">'+inlName(esc(bd),nm)+'</div>':'')+'</div>'+
-  (sigs?'<div class="zs">'+sigs+'</div>':'')+
-  (S.seal?'<img class="seal" src="'+S.seal+'" alt="" style="left:198mm;bottom:22mm">':'')+cut+(wm?'<div class="wm">معاينة — مجودة</div>':'')+'<div class="brandln">majoodah.com</div></div>'}
+  '<div class="zcol"><div class="zt">'+titleHTML(t,P)+'</div>'+
+  '<div class="zb">'+zLines(pre,"zpre",nmL)+(inl?'':nmL)+zLines(bd,"zbd",nmL)+'</div>'+
+  (sigs?'<div class="zs">'+sigs+'</div>':'')+'</div>'+
+  (S.seal?'<img class="seal" src="'+S.seal+'" alt="" style="left:192mm;bottom:29mm">':'')+cut+(wm?'<div class="wm">معاينة — مجودة</div>':'')+'<div class="brandln">majoodah.com</div></div>'}
+/* قوالب الزهور: الاسم سطرٌ مستقل وسط النص — يُقسم النص عند {الاسم} إلى ما قبله وما بعده */
+function zLines(t,cls,nmL){if(!t)return "";return esc(t).split(new RegExp(NM0+"[^"+NM1+"]*"+NM1)).map(function(x){x=x.replace(/^[\s،,؛]+/,"").trim();return x?'<div class="'+cls+'">'+x+'</div>':""}).join(nmL)}
+/* حجم الاسم: ٣٤pt ويصغر حتى يبقى في سطر واحد بعرض ١٦٨ مم (قياس فعلي بالخط المختار) */
+var NMC=null;function nmPt(n){var w;try{NMC=NMC||document.createElement("canvas").getContext("2d");NMC.font="700 100px '"+S.nameFont+"', serif";w=NMC.measureText(AN(String(n||""))).width}catch(e){w=String(n||"").length*48}
+ var mmAt30=w/100*30*(96/72)*(25.4/96);return Math.max(14,Math.min(34,30*168/Math.max(1,mmAt30))).toFixed(1)}
 /* الاسم داخل النص: {الاسم} في «قبل الاسم» أو «بعد الاسم» يُكتب في مكانه بلون ذهبي بدل سطر الاسم الكبير */
 var NM0="",NM1="";
 function hasInl(){return /\{الاسم\}/.test(String(S.pre||"")+String(S.body||""))}
@@ -869,7 +876,7 @@ function doCutPdf(){var t=tplOf();if(!isZ(t))return;if(!need())return;var R=rows
 /* منطقة الطباعة تُجهَّز مسبقاً بعد كل تعديل، وتُعاد قبل الطباعة إن تغيّر شيء */
 var PDIRTY=true,pT=null;
 function buildPrint(){if(!S)return;var R=rows(),h;
- if(isZ(tplOf())&&S.zSize==="a5"){var two=S.zUp===2;h="";for(var i=0;i<R.length;i+=two?2:1){h+='<div class="zpg '+(two?"a4p":"a5l")+'"><div class="zsc" style="top:0">'+cert(R[i],!ACTIVE)+'</div>'+(two&&R[i+1]?'<div class="zsc" style="top:148.5mm">'+cert(R[i+1],!ACTIVE)+'</div>':'')+'</div>'}}
+ if(isZ(tplOf())&&S.zSize==="a5"){var two=S.zUp===2;h="";for(var i=0;i<R.length;i+=two?2:1){h+='<div class="zpg '+(two?"a4p":"a5l")+'"><div class="zsc" style="top:0">'+cert(R[i],!ACTIVE)+'</div>'+(two&&R[i+1]?'<div class="zsc" style="top:210mm">'+cert(R[i+1],!ACTIVE)+'</div>':'')+'</div>'}}
  else h=R.map(function(r){return cert(r,!ACTIVE)}).join("");
  $("#printArea").innerHTML=h;PDIRTY=false}
 function markPrint(){PDIRTY=true;clearTimeout(pT);pT=setTimeout(buildPrint,1200)}
