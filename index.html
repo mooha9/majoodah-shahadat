@@ -177,12 +177,12 @@ button,input,textarea,select{font:inherit;color:inherit}
 .cert .hd .tt{margin:0}
 .cert .ttx{font-weight:700;line-height:1.25;color:var(--c)}
 .cert .mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;padding-bottom:3mm;min-height:0}
-.cert .pre{font-size:15pt;margin-top:2mm}
+.cert .pre{font-size:15pt;margin-top:2mm;white-space:pre-line}
 .cert .nm{font-weight:700;font-size:32pt;color:var(--nmc);margin-top:1mm;line-height:1.4;padding:0 10mm 1mm;min-width:110mm}
 .cert .nm.line{border-bottom:.6mm solid var(--g)}
 .cert .nm.bar:after{content:"";display:block;width:36mm;height:1mm;background:var(--g);margin:1.5mm auto 0;border-radius:1mm}
 .cert .dv{display:block;width:70mm;height:5mm;margin:0 auto}
-.cert .bd{font-size:14.5pt;line-height:1.8;margin-top:3mm;max-width:205mm}
+.cert .bd{font-size:14.5pt;line-height:1.8;margin-top:3mm;max-width:205mm;white-space:pre-line}
 .cert.P .bd{max-width:160mm}
 .cert.P .nm{font-size:28pt;min-width:100mm}
 .cert .ft{width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:5mm}
@@ -212,8 +212,8 @@ button,input,textarea,select{font:inherit;color:inherit}
 .cert.Z .zt{height:27mm;display:flex;align-items:center;justify-content:center;flex:none}
 .cert.Z .zt .tt{margin:0}
 .cert.Z .zb{display:flex;flex-direction:column;align-items:center;gap:1.2mm;flex:none;width:100%}
-.cert.Z .zpre{text-wrap:balance;font-size:17.5pt;line-height:1.75;color:var(--c);max-width:176mm;margin-bottom:2.5mm}
-.cert.Z .zbd{text-wrap:balance;font-size:18.5pt;line-height:1.75;max-width:180mm}
+.cert.Z .zpre{text-wrap:balance;white-space:pre-line;font-size:17.5pt;line-height:1.75;color:var(--c);max-width:176mm;margin-bottom:2.5mm}
+.cert.Z .zbd{text-wrap:balance;white-space:pre-line;font-size:18.5pt;line-height:1.75;max-width:180mm}
 .cert.Z .nm{color:var(--g);font-weight:700;line-height:1.3;min-width:0;padding:0;margin:1mm 0 1.5mm;white-space:nowrap;max-width:172mm}
 .cert.Z .zm{position:absolute;left:32mm;top:29mm;width:52mm;display:flex;flex-direction:column;align-items:center;gap:1.6mm;z-index:2;text-align:center}
 .cert.Z .zm .lgs{display:flex;gap:3mm;align-items:center;justify-content:center}
@@ -283,7 +283,7 @@ select::-ms-expand{display:none}
     <div class="form">
      <div class="field wide"><label for="t_pre">قبل الاسم</label><input id="t_pre" data-s="pre"></div>
      <div class="field wide"><label for="t_body">بعد الاسم <span class="note">— {السبب} و{الصف} تُستبدل من قائمة الأسماء، و«الطالب/ـة» تُصاغ بحسب جنس كل اسم</span></label><textarea id="t_body" data-s="body"></textarea></div>
-     <div class="field"><label for="t_reason">السبب الافتراضي <span class="note">(اتركه فارغاً لإخفائه)</span></label><input id="t_reason" data-s="reason"></div>
+     <div class="field"><label for="t_reason">السبب الافتراضي <span class="note">(يظهر مكان {السبب}، وإذا ما كان في النص يُضاف في آخره — اتركه فارغاً لإخفائه)</span></label><input id="t_reason" data-s="reason"></div>
      <div class="field"><span class="lbl">الصيغة الافتراضية</span><div class="seg" id="genderSeg" role="group" aria-label="الصيغة الافتراضية"><button type="button" data-gv="m" aria-pressed="false">مذكر</button><button type="button" data-gv="f" aria-pressed="false">مؤنث</button></div></div>
      <div class="field"><label for="t_date">التاريخ</label><input id="t_date" type="date" data-s="date"></div>
      <div class="field"><label for="t_dmode">صيغة التاريخ</label><select id="t_dmode" data-s="dmode"><option value="h">هجري</option><option value="hg">هجري وميلادي</option><option value="none">بدون تاريخ</option></select></div>
@@ -551,7 +551,7 @@ function certZ(r,wm,t,P){var o=S.org,lr=logo("R"),ll=logo("L"),zv=Z.v[t.zv],C=Z.
  var L=o.show?["المملكة العربية السعودية","وزارة التعليم"].concat(o.admin?["الإدارة العامة للتعليم ب"+AN(esc(o.admin.replace(/^ب/,"")))]:[]).concat(o.school?['<b>'+AN(esc(o.school))+'</b>']:[]):[];
  var dt=S.dmode==="none"?"":(S.dmode==="hg"?hijri(S.date)+'<br>'+greg(S.date):hijri(S.date));
  var meta=(lr||ll?'<div class="lgs">'+(lr?'<img class="lg" src="'+lr+'" alt="">':'')+(ll?'<img class="lg" src="'+ll+'" alt="">':'')+'</div>':'')+(L.length?'<div class="orgs">'+L.map(function(x){return '<div>'+x+'</div>'}).join("")+'</div>':'')+(dt?'<div class="dt">'+dt+'</div>':'');
- var pre=fill(S.pre,r),bd=fill(S.body,r),inl=hasInl();
+ var pre=fill(S.pre,r),bd=fill(bodyR(r),r),inl=hasInl();
  var nmL='<div class="nm" style="font-family:\''+S.nameFont+'\',serif;font-size:'+nmPt(r.name)+'pt">'+AN(esc(r.name))+'</div>';
  var sigs=(S.sigs||[]).filter(function(s){return s.title||s.name||s.img}).map(function(s){return '<div class="sig">'+(s.img?'<img class="s" src="'+s.img+'" alt="">':'<div class="blank"></div>')+'<i></i>'+(s.title?'<b>'+esc(sigT(s))+'</b>':'')+AN(esc(s.name))+'</div>'}).join("");
  var cut=S.zCut==="none"?"":'<svg class="cutl" viewBox="0 0 297 210" xmlns="http://www.w3.org/2000/svg"><path d="'+zD(zPts(zCutKey(),t.zv))+'" fill="none" stroke="#8d8d8d" stroke-width="'+(zCutKey()==="a5"?.36:.28)+'" stroke-dasharray="'+(zCutKey()==="a5"?"2.6 1.8":"2 1.4")+'"/></svg>';
@@ -568,6 +568,9 @@ var NMC=null;function nmPt(n){var w;try{NMC=NMC||document.createElement("canvas"
  var mmAt30=w/100*30*(96/72)*(25.4/96);return Math.max(14,Math.min(34,30*168/Math.max(1,mmAt30))).toFixed(1)}
 /* الاسم داخل النص: {الاسم} في «قبل الاسم» أو «بعد الاسم» يُكتب في مكانه بلون ذهبي بدل سطر الاسم الكبير */
 var NM0="",NM1="";
+/* السبب يظهر مكان {السبب}، وإذا ما كتبه المستخدم في النصين يُضاف في آخر «بعد الاسم» */
+function bodyR(r){var b=String(S.body||""),ty=TYPES[S.type];if(/\{السبب\}/.test(String(S.pre||"")+b))return b;
+ if(!(r&&r.reason)&&!(S.reason&&!(ty&&ty.reason===S.reason)))return b;return b?b+" {السبب}":"{السبب}"}
 function hasInl(){return /\{الاسم\}/.test(String(S.pre||"")+String(S.body||""))}
 function inlName(h,nm){return h.replace(new RegExp(NM0+"[^"+NM1+"]*"+NM1,"g"),nm)}
 /* ===== التخزين ===== */
@@ -595,8 +598,8 @@ function greg(iso){try{return AN(new Intl.DateTimeFormat("ar-EG-u-nu-arab",{day:
 var GEN_RE=/([^\s<>"'،,.()«»]+)\/ـة/g;
 var FEM=/(^|[\s،.«(])((?:و|ف|ب|ل|وب|ول|بل)?)(تفوّق|تفوق|تميّز|تميز|عطائ|أدائ|ادائ|جهود|جهد|مشاركت|تخرّج|تخرج|حضور|إنجاز|انجاز|اجتهاد|تعاون|إبداع|ابداع|التزام|حرص|انضباط|إخلاص|اخلاص|تفاني|سعي|مثابرت|تحصيل|نشاط|عمل|إتمام|اتمام)ه(?=$|[\s،.»)!؛:])/g;
 function gtx(t,g){var m=G[g]||G.m;t=String(t||"");Object.keys(m).forEach(function(k){t=t.split(k).join(m[k])});t=t.replace(GEN_RE,g==="f"?"$1ة":"$1");return g==="f"?t.replace(FEM,"$1$2$3ها"):t}
-function tidy(t){return t.replace(/\s(?:في|من|على|إلى|عن|ب)(?=\s*(?:[،.؛]|$))/g,"").replace(/\s+([،.,؛:!])/g,"$1").replace(/([،,؛])\s*([،.,؛])/g,"$2").replace(/^[\s،,؛.]+/,"").replace(/[\s،,؛]+$/,"").replace(/\s{2,}/g," ").trim()}
-function fill(t,r){var g=gOf(r),rs=/^[-—–]$/.test(r.reason||"")?"":(r.reason||S.reason);t=gtx(t,g);
+function tidy(t){return t.replace(/\r/g,"").replace(/[ \t](?:في|من|على|إلى|عن|ب)(?=[ \t]*(?:[،.؛]|$))/g,"").replace(/[ \t]+([،.,؛:!])/g,"$1").replace(/([،,؛])[ \t]*([،.,؛])/g,"$2").replace(/^[\s،,؛.]+/,"").replace(/[\s،,؛]+$/,"").replace(/[ \t]{2,}/g," ").replace(/[ \t]*\n[ \t]*/g,"\n").replace(/\n{3,}/g,"\n\n")}
+function fill(t,r){var g=gOf(r),rs=/^[-—–]$/.test(r.reason||"")?"":(r.reason||S.reason);t=gtx(String(t||"").replace(/ {2,}/g,function(m){return " "+" ".repeat(m.length-1)}),g);
  if(!r.cls)t=t.replace(/\s*(?:(?:في|من|لل|ب)\s*)?(?:ال)?صف\s*\{الصف\}/g,"");
  t=t.split("{السبب}").join(gtx(rs,g)).split("{الصف}").join(r.cls||"").split("{الاسم}").join(NM0+NM1);return AN(tidy(t))}
 var SIGW=/(^|\s)(ال)?(قائد|وكيل|مدير|مساعد|معلم|مرشد|مشرف|رئيس|منسق|رائد|مدرب|أمين|مسؤول|عميد|نائب|طلابي|تربوي|صحي|إداري|اداري|تعليمي)(?=\s|$)/g;
@@ -719,7 +722,7 @@ function cert(r,wm,tid){var t=tplOf(tid),P=palOf(t);if(isZ(t))return certZ(r,wm,
  var dt=S.dmode==="none"?"":(S.dmode==="hg"?hijri(S.date)+'<br>'+greg(S.date):hijri(S.date));
  var sigs=(S.sigs||[]).filter(function(s){return s.title||s.name||s.img}).map(function(s){return '<div class="sig">'+(s.img?'<img class="s" src="'+s.img+'" alt="">':'<div class="blank"></div>')+(s.title?'<b>'+esc(sigT(s))+'</b>':'')+AN(esc(s.name))+'</div>'}).join("");
  var inl=hasInl(),nmi='<b style="color:'+(t.dark?P.g:P.g)+';font-family:\''+S.nameFont+'\',serif;font-size:1.3em">'+AN(esc(r.name))+'</b>';
- var pre=fill(S.pre,r),bd=fill(S.body,r),nmc=t.nm==="line"||t.nm==="bar"?" "+t.nm:"",ins=t.ins;
+ var pre=fill(S.pre,r),bd=fill(bodyR(r),r),nmc=t.nm==="line"||t.nm==="bar"?" "+t.nm:"",ins=t.ins;
  return '<div class="cert T-'+t.id+(pt?" P":"")+(t.dark?" dark":"")+'" style="--c:'+P.c+';--d:'+P.d+';--g:'+P.g+';--s:'+P.s+(t.bg?';background:'+t.bg:'')+'">'+deco+
   '<div class="in" style="top:'+ins[0]+'mm;right:'+ins[1]+'mm;bottom:'+ins[2]+'mm;left:'+ins[3]+'mm"><div class="hd"'+hdS+'>'+hd+'</div>'+
   '<div class="mid">'+ttMid+(pre?'<div class="pre">'+inlName(esc(pre),nmi)+'</div>':'')+
