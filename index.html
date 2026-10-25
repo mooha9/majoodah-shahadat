@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="شهادات شكر وتقدير وتفوق وحضور لأسماء متعددة دفعة واحدة: الصق الأسماء أو استورد Excel، اختر التصميم، وحمّل الكل PDF أو صوراً — بشعار وزارة التعليم، من مجودة.">
 <title>شهادات مجودة — شهادات لأسماء متعددة دفعة واحدة</title>
-<link rel="icon" type="image/png" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!--pwa--><link rel="icon" type="image/png" sizes="32x32" href="/favicon.png"><link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="app.webmanifest"><meta name="apple-mobile-web-app-title" content="شهادات مجودة"><meta name="application-name" content="شهادات مجودة"><meta name="theme-color" content="#0a6d73"><!--/pwa-->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Baloo+Bhaijaan+2:wght@600;700;800&family=Aref+Ruqaa:wght@400;700&family=Amiri:wght@400;700&family=Reem+Kufi:wght@500;700&family=El+Messiri:wght@500;700&family=Rakkas&family=Lalezar&family=Marhey:wght@700&family=Mirza:wght@500;700&family=Noto+Nastaliq+Urdu:wght@700&family=Gulzar&family=Alkalami&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -922,5 +922,111 @@ Promise.race([load(),new Promise(function(ok){setTimeout(function(){ok(null)},15
 })();
 </script>
 
+<!--inapp--><script>
+/* مجودة — تنبيه متصفحات التطبيقات (2026-10-25). يحقنه inapp_patch.py في كل صفحات المنتجات (ما عدا ملف الأداء: عنده نسخته).
+   انستقرام/واتساب/تيك توك/سناب… تفتح الروابط في متصفح داخلي يتجاهل window.print والتنزيل، فالعميل «ما ينزل معه الملف».
+   1) تنبيه أعلى الصفحة + «افتح في Safari/Chrome» + «نسخ الرابط».
+   2) «انقل بياناتي»: ينسخ localStorage + IndexedDB لهذا الموقع كنص، ويفتح المتصفح على #mj-import فيظهر «لصق بياناتي».
+   3) window.print وروابط التنزيل داخل التطبيق تعرض التنبيه بدل ما تفشل بصمت. */
+(function () {
+  try { if (window.self !== window.top) return; } catch (e) { return; }
+  var UA = navigator.userAgent || "";
+  var IOS = /iPhone|iPad|iPod/.test(UA) || (/Macintosh/.test(UA) && "ontouchend" in document);
+  var AND = /Android/.test(UA);
+  var M = [["Instagram", "انستقرام"], ["FBAN|FBAV|FB_IAB", "فيسبوك"], ["WhatsApp", "واتساب"], ["Snapchat", "سناب شات"],
+    ["musical_ly|TikTok|BytedanceWebview|trill", "تيك توك"], ["Twitter", "إكس"], ["Line/", "لاين"], ["Telegram", "تيليجرام"]];
+  var APP = "";
+  for (var i = 0; i < M.length; i++) if (new RegExp(M[i][0]).test(UA)) { APP = M[i][1]; break; }
+  if (!APP && AND && /; wv\)/.test(UA)) APP = "التواصل";
+  var BR = IOS ? "Safari" : "Chrome";
+  var IMPORT = /mj-import/.test(location.hash);
+  if (!APP && !IMPORT) return;
+
+  var css = "#mjia{position:fixed;top:0;left:0;right:0;z-index:2147483000;direction:rtl;background:#0b3d40;color:#fff;font:600 14px/1.6 -apple-system,'SF Arabic',Tahoma,sans-serif;padding:12px 14px 12px 40px;box-shadow:0 8px 24px rgba(0,0,0,.3)}" +
+    "#mjia p{margin:0 0 8px}#mjia b{color:#f3c76b}#mjia .r{display:flex;gap:8px;flex-wrap:wrap}" +
+    "#mjia button{font:700 13px/1 inherit;font-family:inherit;border:0;border-radius:10px;padding:10px 14px;cursor:pointer;background:#fff;color:#0b3d40}" +
+    "#mjia button.p{background:#e1a23a;color:#1b1b1b}#mjia .x{position:absolute;top:8px;left:10px;background:none;color:#fff;font-size:20px;padding:4px 8px}" +
+    "#mjia.pulse{animation:mjp .5s 2}@keyframes mjp{50%{background:#a8792a}}" +
+    "#mjt{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:2147483001;background:#1f312d;color:#fff;font:600 14px/1.5 Tahoma,sans-serif;direction:rtl;padding:12px 18px;border-radius:12px;max-width:90vw;text-align:center;opacity:0;transition:.25s;pointer-events:none}#mjt.s{opacity:1}";
+  var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
+  function toast(t) { var e = document.getElementById("mjt"); if (!e) { e = document.createElement("div"); e.id = "mjt"; document.body.appendChild(e); }
+    e.textContent = t; e.classList.add("s"); clearTimeout(e._t); e._t = setTimeout(function () { e.classList.remove("s"); }, 4200); }
+  function base() { return location.href.replace(/#.*$/, ""); }
+  function copy(t) { return navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject(); }
+
+  /* ---- نقل البيانات: localStorage + IndexedDB لهذا النطاق ---- */
+  function blobToURL(b) { return new Promise(function (r) { var f = new FileReader(); f.onload = function () { r({__mjblob: f.result}); }; f.onerror = function () { r(null); }; f.readAsDataURL(b); }); }
+  function dumpIDB() {
+    if (!window.indexedDB || !indexedDB.databases) return Promise.resolve([]);
+    return indexedDB.databases().then(function (dbs) {
+      return Promise.all(dbs.map(function (d) { return new Promise(function (res) {
+        var rq = indexedDB.open(d.name); rq.onerror = function () { res(null); };
+        rq.onsuccess = function () { var db = rq.result, names = [].slice.call(db.objectStoreNames), out = {name: d.name, stores: {}};
+          if (!names.length) { db.close(); return res(out); }
+          var tx = db.transaction(names, "readonly"), pend = [];
+          names.forEach(function (n) { var s = tx.objectStore(n), o = out.stores[n] = {keyPath: s.keyPath, autoIncrement: s.autoIncrement, rows: []};
+            s.openCursor().onsuccess = function (e) { var c = e.target.result; if (!c) return; var row = [s.keyPath ? null : c.key, c.value]; o.rows.push(row);
+              if (c.value instanceof Blob) pend.push(blobToURL(c.value).then(function (v) { row[1] = v; })); c.continue(); }; });
+          tx.oncomplete = function () { db.close(); Promise.all(pend).then(function () { res(out); }); }; tx.onerror = function () { res(out); };
+        }; }); }));
+    }).then(function (a) { return a.filter(Boolean); });
+  }
+  function dump() { var ls = {}; for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); ls[k] = localStorage.getItem(k); }
+    return dumpIDB().then(function (idb) { return JSON.stringify({mj: "transfer", host: location.host, path: location.pathname, ls: ls, idb: idb}); }); }
+  function fromURL(v) { if (v && v.__mjblob) { var p = v.__mjblob.split(","), bin = atob(p[1]), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new Blob([u], {type: (p[0].match(/:(.*?);/) || [])[1]}); } return v; }
+  function restoreDB(d) { return new Promise(function (res) {
+    var rq = indexedDB.open(d.name); rq.onerror = function () { res(); };
+    rq.onsuccess = function () { var db = rq.result, need = Object.keys(d.stores).filter(function (n) { return !db.objectStoreNames.contains(n); });
+      function fill(db) { var names = Object.keys(d.stores).filter(function (n) { return db.objectStoreNames.contains(n); }); if (!names.length) { db.close(); return res(); }
+        var tx = db.transaction(names, "readwrite"); names.forEach(function (n) { var s = tx.objectStore(n); d.stores[n].rows.forEach(function (r) { var v = fromURL(r[1]); if (s.keyPath) s.put(v); else s.put(v, r[0]); }); });
+        tx.oncomplete = tx.onerror = function () { db.close(); res(); }; }
+      if (!need.length) return fill(db);
+      var ver = db.version + 1; db.close(); var up = indexedDB.open(d.name, ver);
+      up.onupgradeneeded = function () { need.forEach(function (n) { var o = d.stores[n]; up.result.createObjectStore(n, o.keyPath ? {keyPath: o.keyPath, autoIncrement: o.autoIncrement} : {autoIncrement: o.autoIncrement}); }); };
+      up.onsuccess = function () { fill(up.result); }; up.onerror = function () { res(); };
+    }; }); }
+  function restore(t) { var o; try { o = JSON.parse(t); } catch (e) { o = null; }
+    if (!o || o.mj !== "transfer") return Promise.reject("bad");
+    if (o.host !== location.host) return Promise.reject("host");
+    Object.keys(o.ls || {}).forEach(function (k) { try { localStorage.setItem(k, o.ls[k]); } catch (e) {} });
+    return (o.idb || []).reduce(function (p, d) { return p.then(function () { return restoreDB(d); }); }, Promise.resolve()); }
+
+  var copied = false;
+  function openBrowser() { var u = base() + (copied ? "#mj-import" : "");
+    if (AND) location.href = "intent://" + u.replace(/^https?:\/\//, "") + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(u) + ";end";
+    else if (IOS) location.href = "x-safari-" + u;
+    setTimeout(function () { toast("إذا ما انفتح: اضغط ⋯ أعلى الشاشة ثم «فتح في المتصفح»"); }, 900); }
+
+  function bar(alert) {
+    var b = document.getElementById("mjia");
+    if (!b) { b = document.createElement("div"); b.id = "mjia"; document.body.appendChild(b);
+      if (APP) {
+        b.innerHTML = '<button class="x" aria-label="إغلاق">×</button><p><b>أنت فاتح الصفحة من داخل ' + APP + '.</b> الطباعة وحفظ PDF وتنزيل الملفات ما تشتغل داخل التطبيقات — افتحها في ' + BR + '.</p>' +
+          '<div class="r"><button class="p" data-a="open">افتح في ' + BR + '</button><button data-a="link">نسخ الرابط</button><button data-a="move">عبّيت بيانات هنا؟ انقلها</button></div>';
+      } else {
+        b.innerHTML = '<button class="x" aria-label="إغلاق">×</button><p><b>تنقل بياناتك اللي عبّيتها داخل التطبيق؟</b> اضغط «لصق بياناتي» واسمح باللصق.</p><div class="r"><button class="p" data-a="paste">لصق بياناتي</button></div>';
+      }
+      b.addEventListener("click", function (e) { var a = e.target.getAttribute("data-a");
+        if (e.target.classList.contains("x")) { b.remove(); if (IMPORT) history.replaceState(null, "", base()); return; }
+        if (a === "open") openBrowser();
+        if (a === "link") copy(base()).then(function () { toast("نُسخ الرابط — الصقه في " + BR); }, function () { toast("انسخ الرابط من ⋯ ثم «نسخ الرابط»"); });
+        if (a === "move") dump().then(copy).then(function () { copied = true; toast("نُسخت بياناتك ✓ الحين اضغط «افتح في " + BR + "» ثم «لصق بياناتي»"); }, function () { toast("ما قدرت أنسخ البيانات"); });
+        if (a === "paste") { if (!navigator.clipboard || !navigator.clipboard.readText) return toast("حدّث المتصفح ثم حاول");
+          navigator.clipboard.readText().then(restore).then(function () { toast("انتقلت بياناتك ✓"); setTimeout(function () { location.replace(base()); }, 900); },
+            function (err) { toast(err === "host" ? "البيانات المنسوخة لمنتج ثاني" : "ما لقيت بيانات منسوخة — ارجع للتطبيق واضغط «انقلها» أولاً"); }); }
+      });
+    }
+    if (alert) { b.classList.remove("pulse"); void b.offsetWidth; b.classList.add("pulse"); toast("الطباعة والتنزيل تحتاج " + BR + " — افتح الصفحة في المتصفح"); }
+  }
+  function ready(f) { if (document.body) f(); else document.addEventListener("DOMContentLoaded", f); }
+  ready(function () { bar(false); });
+  if (APP) {
+    window.print = function () { ready(function () { bar(true); }); };
+    var click = HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click = function () { if (this.hasAttribute("download")) { bar(true); return; } return click.apply(this, arguments); };
+    document.addEventListener("click", function (e) { var a = e.target.closest && e.target.closest("a[download]"); if (a) { e.preventDefault(); bar(true); } }, true);
+  }
+})();
+</script><!--/inapp-->
 </body>
 </html>
